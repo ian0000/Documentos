@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/html"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="headerfiles">
+
+    <meta charset="utf-8">
+    <title>Dopamina | E-commerce template</title>
+
+    <!-- Mobile Specific Metas
+    ================================================== -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Construction Html5 Template">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="author" content="Themefisher">
+    <meta name="generator" content="Themefisher Constra HTML Template v1.0">
+
+    <!-- theme meta -->
+    <meta name="theme-name" content="aviato" />
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="images/favicon.png" />
+
+    <!-- Themefisher Icon font -->
+    <link rel="stylesheet" th:href="@{~/assets/plugins/themefisher-font/style.css}">
+    <!-- bootstrap.min css -->
+    <link rel="stylesheet" th:href="@{~/assets/plugins/bootstrap/css/bootstrap.min.css}">
+
+    <!-- Animate css -->
+    <link rel="stylesheet" th:href="@{~/assets/plugins/animate/animate.css}">
+    <!-- Slick Carousel -->
+    <link rel="stylesheet" th:href="@{~/assets/plugins/slick/slick.css}">
+    <link rel="stylesheet" th:href="@{~/assets/plugins/slick/slick-theme.css}">
+
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" th:href="@{~/assets/css/style.css}">
+
+  <script>
+        function reloadPage() {
+            // CSS file failed to load, reload the page
+            location.reload();
+        }
+    </script>
+</head>
+
+<div th:fragment="scriptsfinales">
+
+  <!-- Main jQuery -->
+  <script th:src="@{~/assets/plugins/jquery/dist/jquery.min.js}"></script>
+  <!-- Bootstrap 3.1 -->
+  <script th:src="@{~/assets/plugins/bootstrap/js/bootstrap.min.js}"></script>
+  <!-- Bootstrap Touchpin -->
+  <script th:src="@{~/assets/plugins/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.min.js}"></script>
+  <!-- Instagram Feed Js -->
+  <script th:src="@{~/assets/plugins/instafeed/instafeed.min.js}"></script>
+  <!-- Video Lightbox Plugin -->
+  <script th:src="@{~/assets/plugins/ekko-lightbox/dist/ekko-lightbox.min.js}"></script>
+  <!-- Count Down Js -->
+  <script th:src="@{~/assets/plugins/syo-timer/build/jquery.syotimer.min.js}"></script>
+
+  <!-- slick Carousel -->
+  <script th:src="@{~/assets/plugins/slick/slick.min.js}"></script>
+  <script th:src="@{~/assets/plugins/slick/slick-animation.min.js}"></script>
+
+  <!-- Google Mapl -->
+  <script type="text/javascript" th:src="@{~/assets/plugins/google-map/gmap.js}"></script>
+
+  <!-- Main Js File -->
+  <script th:src="@{~/assets/js/script.js}"></script>
+
+</div>

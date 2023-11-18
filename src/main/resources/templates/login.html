@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:insert="~{fragments.html :: headerfiles}"></div>
+
+<body id="body">
+
+<section class="signin-page account">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+              <div class="block text-center">
+                <a class="logo" href="index.html">
+                  <img src="images/logo.png" alt="">
+                </a>
+                <h2 class="text-center">Welcome Back</h2>
+                <div class="message" th:if="${param.error}">
+                    Invalid username and password.
+                </div>
+                <div class="message" th:if="${param.logout}">
+                    You have been logged out.
+                </div>
+                <form class="text-left clearfix" th:action="@{/login}" method="post" name='f'>
+                  <div class="form-group">
+                    <input type="text" name="username" class="form-control"  placeholder="Email" var="noUser">
+                  </div>
+                  <div class="form-group">
+                    <input type="password" name="password" class="form-control" placeholder="Password" var="noPass">
+                  </div>
+                  <div class="text-center">
+                    <button type="submit"  class="btn btn-main text-center" >Login</button>
+                  </div>
+                </form>
+                <p class="mt-20">New in this site ?<a href="signin.html"> Create New Account</a></p>
+              </div>
+            </div>
+          </div>
+    </div>
+</section>
+
+<div th:insert="~{fragments.html :: scriptsfinales}"></div>
+<script type="text/javascript">
+  function removeSubstringsFromURL(substringsToRemove) {
+    let newURL = window.location.href;
+
+      substringsToRemove.forEach(substring => {
+        newURL = newURL.replace(substring, "");
+      });
+
+      window.history.replaceState(null, null, newURL);
+}
+
+  function displayMessageWithTimer() {
+    // Set the time delay in milliseconds (e.g., 5000 milliseconds = 5 seconds)
+    const timeDelay = 1000;
+  
+  
+    // Set a timeout function to display the message after the time delay
+    setTimeout(function() {
+      $(".message").remove();
+      
+      const substringsToRemove = ["?error=true", "?logout=true"];
+      removeSubstringsFromURL(substringsToRemove);
+      
+    }, timeDelay);
+  }
+  
+  // Call the function when the page loads or when needed
+  displayMessageWithTimer();
+  </script>
+</body>
+</html>
