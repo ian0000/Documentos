@@ -1,5 +1,6 @@
+
 /*
-TODO 1: lo que hay que hacer es un api para cada parte del crud de cada una de las siguientes modulos
+TODO 1: lo que hay que hacer es un api para cada parte del crud de cada una de las siguientes modulos 
 de que manera funcionarian estos crud?
 
 para el trabajo de la api se usara el framework de spring boot
