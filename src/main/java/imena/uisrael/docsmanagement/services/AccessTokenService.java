@@ -23,14 +23,13 @@ public class AccessTokenService {
     private UserRepo userRepository;
 
     public AccessToken saveAccessToken(String email, String password, String keyword) {
-        User user = userRepository.findByEmailAndPassword(email, password);// TODO encrypt password
-        log.atInfo().log("Usuario " + user);
+        User user = userRepository.findByEmailAndPassword(email, password);
         if (user != null) {
             AccessToken accessToken = new AccessToken();
             accessToken.setToken(generateToken());
             accessToken.setKeyword(keyword);
             accessToken.setUser(user);
-            log.atInfo().log("Token generado " + accessToken);
+            accessToken.setActive(true);
             return accessTokenRepository.save(accessToken);
         } else {
             return null;
@@ -43,6 +42,8 @@ public class AccessTokenService {
         secureRandom.nextBytes(token);
         return Base64.getEncoder().encodeToString(token);
     }
-
+    public AccessToken updateAccessToken(AccessToken accessToken) {
+        return accessTokenRepository.save(accessToken);
+    }
 
 }

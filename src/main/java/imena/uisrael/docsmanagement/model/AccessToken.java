@@ -26,7 +26,8 @@ public class AccessToken {
 
     private String token;
     private String keyword;// puede tener varias claves pero con esto encuentra la especifca?
-
+    private boolean active;
+    
     @JsonIgnore
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)

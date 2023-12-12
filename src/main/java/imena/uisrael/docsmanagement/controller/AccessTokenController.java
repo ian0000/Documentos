@@ -9,7 +9,6 @@ import imena.uisrael.docsmanagement.model.AccessToken;
 import imena.uisrael.docsmanagement.model.User;
 import imena.uisrael.docsmanagement.services.AccessTokenService;
 import imena.uisrael.docsmanagement.services.UserService;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 @RequestMapping("/api/tokens")
@@ -59,6 +60,56 @@ public class AccessTokenController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario y/o contraseña incorrectos");
         }
     }
+
+    @PostMapping("/changestate")
+    public ResponseEntity<Object> changeState(@RequestParam String email, @RequestParam String password,
+            @RequestParam String token) {
+        User user = userService.findByEmailAndPassword(email, password);
+        if (user != null) {
+            Optional<AccessToken> accessTokenOptional = user.getAccessTokens().stream()
+                    .filter(x -> token.equals(x.getToken()) == true).findFirst();
+            if (accessTokenOptional.isPresent()) {
+                AccessToken accessToken = accessTokenOptional.get();
+                String texto;
+                if(accessToken.isActive() == true){
+                    accessToken.setActive(false);
+                    texto = "Token activado";
+                    
+                }else{
+                    accessToken.setActive(true);
+                    texto = "Token desactivado";
+                }
+                accessTokenService.updateAccessToken(accessToken);
+                return ResponseEntity.ok(texto);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Token no encontrado");
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario y/o contraseña incorrectos");
+        }
+    }
+    @PostMapping("/update")
+    public ResponseEntity<Object> updateToken(@RequestParam String email, @RequestParam String password,
+            @RequestParam String token) {
+        
+        User user = userService.findByEmailAndPassword(email, password);
+        if (user != null) {
+            Optional<AccessToken> accessTokenOptional = user.getAccessTokens().stream()
+                    .filter(x -> token.equals(x.getToken()) == true).findFirst();
+            if (accessTokenOptional.isPresent()) {
+                AccessToken accessToken = accessTokenOptional.get();
+                accessToken.setToken(accessTokenService.generateToken());
+                accessTokenService.updateAccessToken(accessToken);
+                return ResponseEntity.ok(accessToken.getToken());
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Token no encontrado");
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario y/o contraseña incorrectos");
+        }
+    }
+    
+
 
     @GetMapping("/list")
     public ResponseEntity<Object> getAccessTokenList(@RequestParam String email,

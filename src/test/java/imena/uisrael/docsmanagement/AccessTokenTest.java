@@ -52,14 +52,14 @@ public class AccessTokenTest {
 
         when(userService.findByEmailAndPassword(email, password)).thenReturn(user);
         when(accessTokenService.saveAccessToken(email, password, keyword))
-                .thenReturn(new AccessToken(1L, "generatedToken", keyword, user));
+                .thenReturn(new AccessToken(1L, "generatedToken", keyword, true, user));
 
         // Execute
         ResponseEntity<Object> response = accessTokenController.generarAccessToken(email, password, keyword);
 
         // Verify
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("{\"accessTokenID\":1,\"token\":\"generatedToken\",\"keyword\":\"newToken\"}", response.getBody());
+        assertEquals("{\"accessTokenID\":1,\"token\":\"generatedToken\",\"keyword\":\"newToken\",\"active\":true}", response.getBody());
     }
 
     @Test
@@ -72,8 +72,8 @@ public class AccessTokenTest {
         user.setEmail(email);
         user.setPassword(password);
         List<AccessToken> tokens = new ArrayList<>();
-        tokens.add(new AccessToken(1l, "generatedToken", "token1", user));
-        tokens.add(new AccessToken(2l, "generatedToken", "token2", user));
+        tokens.add(new AccessToken(1l, "generatedToken", "token1", true, user));
+        tokens.add(new AccessToken(2l, "generatedToken", "token2", true, user));
         user.setAccessTokens(tokens);
 
         when(userService.findByEmailAndPassword(email, password)).thenReturn(user);
@@ -83,7 +83,7 @@ public class AccessTokenTest {
 
         // Verify
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("[{\"accessTokenID\":1,\"token\":\"generatedToken\",\"keyword\":\"token1\"},{\"accessTokenID\":2,\"token\":\"generatedToken\",\"keyword\":\"token2\"}]", response.getBody());
+        assertEquals("[{\"accessTokenID\":1,\"token\":\"generatedToken\",\"keyword\":\"token1\",\"active\":true},{\"accessTokenID\":2,\"token\":\"generatedToken\",\"keyword\":\"token2\",\"active\":true}]", response.getBody());
     }
 
     // Other test cases for getAccessTokenList method...
@@ -99,8 +99,8 @@ public class AccessTokenTest {
         user.setEmail(email);
         user.setPassword(password);
         List<AccessToken> tokens = new ArrayList<>();
-        tokens.add(new AccessToken(1l, "generatedToken", "token1", user));
-        tokens.add(new AccessToken(2l, "generatedToken", "token2", user));
+        tokens.add(new AccessToken(1l, "generatedToken", "token1", true, user));
+        tokens.add(new AccessToken(2l, "generatedToken", "token2", true, user));
         user.setAccessTokens(tokens);
 
         when(userService.findByEmailAndPassword(email, password)).thenReturn(user);
@@ -111,7 +111,7 @@ public class AccessTokenTest {
 
         // Verify
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("[{\"accessTokenID\":1,\"token\":\"generatedToken\",\"keyword\":\"token1\"},{\"accessTokenID\":2,\"token\":\"generatedToken\",\"keyword\":\"token2\"}]", response.getBody());
+        assertEquals("[{\"accessTokenID\":1,\"token\":\"generatedToken\",\"keyword\":\"token1\",\"active\":true},{\"accessTokenID\":2,\"token\":\"generatedToken\",\"keyword\":\"token2\",\"active\":true}]", response.getBody());
     }
 
      // Other test cases for conflicts, errors, and edge cases in generarAccessToken method...
