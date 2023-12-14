@@ -2,12 +2,10 @@ package imena.uisrael.docsmanagement.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import imena.uisrael.docsmanagement.model.AccessToken;
 import imena.uisrael.docsmanagement.model.User;
 import imena.uisrael.docsmanagement.services.AccessTokenService;
+import imena.uisrael.docsmanagement.services.GeneralFunctions;
 import imena.uisrael.docsmanagement.services.UserService;
 
 import java.util.ArrayList;
@@ -22,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
@@ -51,7 +48,7 @@ public class AccessTokenController {
             AccessToken accessToken = accessTokenService.saveAccessToken(email, password, keyword);
             if (accessToken != null) {
                 // return ResponseEntity.ok(accessToken.getToken());
-                return convertJSOn(accessToken);
+                return GeneralFunctions.convertJSOn(accessToken);
 
             } else {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fallo al generar el token");
@@ -63,11 +60,11 @@ public class AccessTokenController {
 
     @PostMapping("/changestate")
     public ResponseEntity<Object> changeState(@RequestParam String email, @RequestParam String password,
-            @RequestParam String token) {
+            @RequestParam String keyword) {
         User user = userService.findByEmailAndPassword(email, password);
         if (user != null) {
             Optional<AccessToken> accessTokenOptional = user.getAccessTokens().stream()
-                    .filter(x -> token.equals(x.getToken()) == true).findFirst();
+                    .filter(x -> keyword.equals(x.getKeyword()) == true).findFirst();
             if (accessTokenOptional.isPresent()) {
                 AccessToken accessToken = accessTokenOptional.get();
                 String texto;
@@ -90,17 +87,17 @@ public class AccessTokenController {
     }
     @PostMapping("/update")
     public ResponseEntity<Object> updateToken(@RequestParam String email, @RequestParam String password,
-            @RequestParam String token) {
+            @RequestParam String keyword) {
         
         User user = userService.findByEmailAndPassword(email, password);
         if (user != null) {
             Optional<AccessToken> accessTokenOptional = user.getAccessTokens().stream()
-                    .filter(x -> token.equals(x.getToken()) == true).findFirst();
+                    .filter(x -> keyword.equals(x.getKeyword()) == true).findFirst();
             if (accessTokenOptional.isPresent()) {
                 AccessToken accessToken = accessTokenOptional.get();
                 accessToken.setToken(accessTokenService.generateToken());
                 accessTokenService.updateAccessToken(accessToken);
-                return ResponseEntity.ok(accessToken.getToken());
+                return ResponseEntity.ok( GeneralFunctions.convertJSOn(accessToken.getToken()));
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Token no encontrado");
             }
@@ -108,9 +105,6 @@ public class AccessTokenController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario y/o contraseña incorrectos");
         }
     }
-    
-
-
     @GetMapping("/list")
     public ResponseEntity<Object> getAccessTokenList(@RequestParam String email,
             @RequestParam String password) {
@@ -119,7 +113,7 @@ public class AccessTokenController {
             if (!user.getAccessTokens().isEmpty()) {
                 // return ResponseEntity.ok(user.getAccessTokens().toString());
 
-                return convertJSOn(user.getAccessTokens());
+                return  GeneralFunctions.convertJSOn(user.getAccessTokens());
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No token de acceso encontrado");
             }
@@ -127,7 +121,6 @@ public class AccessTokenController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario y/o contraseña incorrectos");
         }
     }
-
     @GetMapping("/findbykeyword")
     public ResponseEntity<Object> getAccessTokenListByLikeKeyword(@RequestParam String email,
             @RequestParam String password, String keyword) {
@@ -143,7 +136,7 @@ public class AccessTokenController {
                 if (accessTokenOptional.isEmpty()) {
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No token de acceso encontrado");
                 }else{
-                    return convertJSOn(accessTokenOptional);
+                    return  GeneralFunctions.convertJSOn(accessTokenOptional);
                 }
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No token de acceso encontrado");
@@ -153,14 +146,4 @@ public class AccessTokenController {
         }
     }
 
-    public ResponseEntity<Object> convertJSOn(Object objeto) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            String accessTokenJson = objectMapper.writeValueAsString(objeto);
-            return ResponseEntity.ok(accessTokenJson);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fallo al generar json");
-        }
-    }
 }

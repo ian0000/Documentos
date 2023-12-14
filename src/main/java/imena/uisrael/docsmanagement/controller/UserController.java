@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/users")
@@ -28,7 +30,7 @@ public class UserController {
             log.atInfo().log("Usuario nuevo");
             user = new User();
             user.setEmail(email);
-            user.setPassword(password);//TODO encrypt password
+            user.setPassword(password);
             userRepository.save(user);
             return ResponseEntity.ok(user);
         } else {
@@ -38,4 +40,31 @@ public class UserController {
 
     }
 
+    @PostMapping("/update")
+    public ResponseEntity<Object> updateUser(@RequestParam String email, @RequestParam String password) {
+        User user = userRepository.findByEmail(email);
+        if (user != null) {
+            log.atInfo().log("Usuario encontrado");
+            user.setPassword(password);
+            userRepository.save(user);
+            return ResponseEntity.ok(user);
+        } else {
+            log.atError().log("Usuario no encontrado");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
+        }
+    }
+    
+    @PostMapping("/state")
+    public ResponseEntity<Object> updateUserState(@RequestParam String email) {
+        User user = userRepository.findByEmail(email);
+        if (user != null) {
+            log.atInfo().log("Usuario encontrado");
+            user.setActive(!user.isActive());
+            userRepository.save(user);
+            return ResponseEntity.ok(user);
+        } else {
+            log.atError().log("Usuario no encontrado");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
+        }
+    }
 }

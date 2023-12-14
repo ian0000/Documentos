@@ -19,6 +19,7 @@ import imena.uisrael.docsmanagement.controller.AccessTokenController;
 import imena.uisrael.docsmanagement.model.AccessToken;
 import imena.uisrael.docsmanagement.model.User;
 import imena.uisrael.docsmanagement.services.AccessTokenService;
+import imena.uisrael.docsmanagement.services.GeneralFunctions;
 import imena.uisrael.docsmanagement.services.UserService;
 
 @SpringBootTest
@@ -205,7 +206,7 @@ public class AccessTokenTest {
          Object obj = new Object(); // Replace with appropriate test object
  
          // Execute
-         ResponseEntity<Object> response = accessTokenController.convertJSOn(obj);
+         ResponseEntity<Object> response =  GeneralFunctions.convertJSOn(obj);
  
          // Verify
          assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());

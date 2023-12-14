@@ -1,11 +1,24 @@
 package imena.uisrael.docsmanagement.services;
 
 
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
-@Slf4j
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class GeneralFunctions {
 
+    public static ResponseEntity<Object> convertJSOn(Object objeto) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            String accessTokenJson = objectMapper.writeValueAsString(objeto);
+            return ResponseEntity.ok(accessTokenJson);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fallo al generar json");
+        }
+    }
     // serializa la cadena de texto
     // public static byte[] serializeString(String password) {
     // try (ByteArrayOutputStream bos = new ByteArrayOutputStream();

@@ -25,6 +25,7 @@ public class User {
 
     private String email;
     private String password;
+    private boolean active;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<AccessToken> accessTokens;

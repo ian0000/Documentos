@@ -7,7 +7,7 @@ import imena.uisrael.docsmanagement.model.User;
 
 public interface UserRepo extends JpaRepository<User, Long>{
 
-        User findByEmailAndPassword(String email, String password); //TODO encrypt password
+        User findByEmailAndPassword(String email, String password);
         User findByEmail(String email );
     
 }

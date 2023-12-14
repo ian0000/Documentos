@@ -16,11 +16,15 @@ public class UserService {
         if (user == null) {
             user = new User();
             user.setEmail(email);
-            user.setPassword(password);//TODO encrypt password
+            user.setPassword(password);
+            user.setActive(true);
             return userRepository.save(user);
         }else{
             return null;
         }
+    }
+    public User updateUser(User user) {
+        return userRepository.save(user);
     }
     public User findByEmail(String email) {   
         return userRepository.findByEmail(email);
