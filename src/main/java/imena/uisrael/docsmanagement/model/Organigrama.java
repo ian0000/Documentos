@@ -24,9 +24,9 @@ public class Organigrama {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long OrganigramaID;
-    private String CodigoPersona;// cedula id etc un identificador
-    private String NombrePersona;// para mostrar?
+    private long organigramaID;
+    private String codigoPersona;// cedula id etc un identificador
+    private String nombrePersona;// para mostrar?
     private String nivel; // posicion
     private boolean active;
 

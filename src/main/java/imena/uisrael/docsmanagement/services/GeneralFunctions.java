@@ -19,6 +19,30 @@ public class GeneralFunctions {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fallo al generar json");
         }
     }
+
+    
+    public static String ConverToString(Object objeto) {
+        ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                return objectMapper.writeValueAsString(objeto);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                return "";
+            }
+        
+    }
+    
+    public static Object ConverToObject(String objeto, Class<?> objectClass) {
+        ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                return objectMapper.readValue(objeto, objeto.getClass());
+
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                return "";
+            }
+        
+    }
     // serializa la cadena de texto
     // public static byte[] serializeString(String password) {
     // try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -44,4 +68,5 @@ public class GeneralFunctions {
     // return null;
     // }
     // }
+
 }
