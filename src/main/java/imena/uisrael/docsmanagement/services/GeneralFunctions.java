@@ -7,9 +7,11 @@ import org.springframework.http.ResponseEntity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import imena.uisrael.docsmanagement.model.Organigrama;
+
 public class GeneralFunctions {
 
-    public static ResponseEntity<Object> convertJSOn(Object objeto) {
+    public static ResponseEntity<Object> convertJSON(Object objeto) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             String accessTokenJson = objectMapper.writeValueAsString(objeto);
@@ -35,7 +37,7 @@ public class GeneralFunctions {
     public static Object ConverToObject(String objeto, Class<?> objectClass) {
         ObjectMapper objectMapper = new ObjectMapper();
             try {
-                return objectMapper.readValue(objeto, objeto.getClass());
+                return objectMapper.readValue(objeto, objectClass);
 
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
@@ -43,30 +45,5 @@ public class GeneralFunctions {
             }
         
     }
-    // serializa la cadena de texto
-    // public static byte[] serializeString(String password) {
-    // try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
-    // ObjectOutput out = new ObjectOutputStream(bos)) {
-    // out.writeObject(password);
-    // log.atInfo().log("Serializado" + out.toString());
-    // log.atInfo().log("Serializado" + bos.toByteArray());
-
-    // return bos.toByteArray();
-    // } catch (IOException e) {
-    // e.printStackTrace();
-    // return null;
-    // }
-    // }
-
-    // // deserializa los bytes en un string
-    // public static String deserializeString(byte[] serializedData) {
-    // try (ByteArrayInputStream bis = new ByteArrayInputStream(serializedData);
-    // ObjectInput in = new ObjectInputStream(bis)) {
-    // return (String) in.readObject();
-    // } catch (IOException | ClassNotFoundException e) {
-    // e.printStackTrace();
-    // return null;
-    // }
-    // }
 
 }
