@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import imena.uisrael.docsmanagement.model.User;
+import imena.uisrael.docsmanagement.model.Parciales.RespuestasAccessToken;
+import imena.uisrael.docsmanagement.model.Parciales.RespuestasUsuarios;
 import imena.uisrael.docsmanagement.repo.UserRepo;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,15 +27,15 @@ public class UserController {
     public ResponseEntity<Object> createUser(@RequestParam String email, @RequestParam String password) {
         User user = userRepository.findByEmail(email);
         if (user == null) {
-            log.atInfo().log("Usuario nuevo");
+            log.atInfo().log(RespuestasUsuarios.USUARIONUEVO);
             user = new User();
             user.setEmail(email);
             user.setPassword(password);
             userRepository.save(user);
             return ResponseEntity.ok(user);
         } else {
-            log.atError().log("Usuario existente");
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Usuario ya existe");
+            log.atError().log(RespuestasUsuarios.USUARIOEXISTE);
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(RespuestasUsuarios.USUARIOEXISTE);
         }
 
     }
@@ -42,13 +44,13 @@ public class UserController {
     public ResponseEntity<Object> updateUser(@RequestParam String email, @RequestParam String password) {
         User user = userRepository.findByEmail(email);
         if (user != null) {
-            log.atInfo().log("Usuario encontrado");
+            log.atInfo().log(RespuestasUsuarios.USUARIOEXISTE);
             user.setPassword(password);
             userRepository.save(user);
             return ResponseEntity.ok(user);
         } else {
-            log.atError().log("Usuario no encontrado");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
+            log.atError().log(RespuestasUsuarios.USUARIONOENCONTRADO);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(RespuestasUsuarios.USUARIONOENCONTRADO);
         }
     }
     
@@ -56,13 +58,13 @@ public class UserController {
     public ResponseEntity<Object> updateUserState(@RequestParam String email) {
         User user = userRepository.findByEmail(email);
         if (user != null) {
-            log.atInfo().log("Usuario encontrado");
+            log.atInfo().log(RespuestasUsuarios.USUARIOEXISTE);
             user.setActive(!user.isActive());
             userRepository.save(user);
             return ResponseEntity.ok(user);
         } else {
-            log.atError().log("Usuario no encontrado");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
+            log.atError().log(RespuestasUsuarios.USUARIONOENCONTRADO);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(RespuestasUsuarios.USUARIONOENCONTRADO);
         }
     }
 }

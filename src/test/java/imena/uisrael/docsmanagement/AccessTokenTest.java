@@ -206,7 +206,7 @@ public class AccessTokenTest {
          Object obj = new Object(); // Replace with appropriate test object
  
          // Execute
-         ResponseEntity<Object> response =  GeneralFunctions.convertJSOn(obj);
+         ResponseEntity<Object> response =  GeneralFunctions.convertJSON(obj);
  
          // Verify
          assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());

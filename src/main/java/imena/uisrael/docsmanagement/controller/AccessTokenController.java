@@ -4,6 +4,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import imena.uisrael.docsmanagement.model.AccessToken;
 import imena.uisrael.docsmanagement.model.User;
+import imena.uisrael.docsmanagement.model.Parciales.RespuestasAccessToken;
+import imena.uisrael.docsmanagement.model.Parciales.RespuestasUsuarios;
 import imena.uisrael.docsmanagement.services.AccessTokenService;
 import imena.uisrael.docsmanagement.services.GeneralFunctions;
 import imena.uisrael.docsmanagement.services.UserService;
@@ -43,18 +45,18 @@ public class AccessTokenController {
             Optional<AccessToken> accessTokenOptional = user.getAccessTokens().stream()
                     .filter(x -> keyword.equals(x.getKeyword()) == true).findFirst();
             if (accessTokenOptional.isPresent()) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("Ya existe un token con esa palabra clave");
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(RespuestasAccessToken.TOKENEXISTE);
             }
             AccessToken accessToken = accessTokenService.saveAccessToken(email, password, keyword);
             if (accessToken != null) {
                 // return ResponseEntity.ok(accessToken.getToken());
-                return GeneralFunctions.convertJSOn(accessToken);
+                return GeneralFunctions.convertJSON(accessToken);
 
             } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fallo al generar el token");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(RespuestasAccessToken.FALLOGENERARTOKEN);
             }
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario y/o contraseña incorrectos");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(RespuestasUsuarios.USUARIOCONTRASENIAINCORRECTOS);
         }
     }
 
@@ -70,19 +72,19 @@ public class AccessTokenController {
                 String texto;
                 if(accessToken.isActive() == true){
                     accessToken.setActive(false);
-                    texto = "Token activado";
+                    texto = RespuestasAccessToken.TOKENACTIVADO;
                     
                 }else{
                     accessToken.setActive(true);
-                    texto = "Token desactivado";
+                    texto = RespuestasAccessToken.TOKENDESACTIVADO;
                 }
                 accessTokenService.updateAccessToken(accessToken);
                 return ResponseEntity.ok(texto);
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Token no encontrado");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(RespuestasAccessToken.TOKENNOENCONTRADO);
             }
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario y/o contraseña incorrectos");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(RespuestasUsuarios.USUARIOCONTRASENIAINCORRECTOS);
         }
     }
     @PostMapping("/update")
@@ -97,12 +99,12 @@ public class AccessTokenController {
                 AccessToken accessToken = accessTokenOptional.get();
                 accessToken.setToken(accessTokenService.generateToken());
                 accessTokenService.updateAccessToken(accessToken);
-                return ResponseEntity.ok( GeneralFunctions.convertJSOn(accessToken.getToken()));
+                return ResponseEntity.ok( GeneralFunctions.convertJSON(accessToken.getToken()));
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Token no encontrado");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(RespuestasAccessToken.TOKENNOENCONTRADO);
             }
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario y/o contraseña incorrectos");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(RespuestasUsuarios.USUARIOCONTRASENIAINCORRECTOS);
         }
     }
     @GetMapping("/list")
@@ -113,12 +115,12 @@ public class AccessTokenController {
             if (!user.getAccessTokens().isEmpty()) {
                 // return ResponseEntity.ok(user.getAccessTokens().toString());
 
-                return  GeneralFunctions.convertJSOn(user.getAccessTokens());
+                return  GeneralFunctions.convertJSON(user.getAccessTokens());
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No token de acceso encontrado");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(RespuestasAccessToken.TOKENNOENCONTRADO);
             }
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario y/o contraseña incorrectos");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(RespuestasUsuarios.USUARIOCONTRASENIAINCORRECTOS);
         }
     }
     @GetMapping("/findbykeyword")
@@ -126,7 +128,7 @@ public class AccessTokenController {
             @RequestParam String password, String keyword) {
         User user = userService.findByEmailAndPassword(email, password);
         if(keyword == null){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Parámetro 'keyword' no puede ser nulo");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(RespuestasAccessToken.PARAMETROKEYWORDNULO);
         }
         if (user != null) {
 
@@ -134,15 +136,15 @@ public class AccessTokenController {
                 List<AccessToken> accessTokenOptional = user.getAccessTokens().stream()
                         .filter(x -> x.getKeyword().contains(keyword)).collect(Collectors.toList());
                 if (accessTokenOptional.isEmpty()) {
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No token de acceso encontrado");
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(RespuestasAccessToken.TOKENNOENCONTRADO);
                 }else{
-                    return  GeneralFunctions.convertJSOn(accessTokenOptional);
+                    return  GeneralFunctions.convertJSON(accessTokenOptional);
                 }
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No token de acceso encontrado");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(RespuestasAccessToken.TOKENNOENCONTRADO);
             }
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario y/o contraseña incorrectos");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(RespuestasUsuarios.USUARIOCONTRASENIAINCORRECTOS);
         }
     }
 
