@@ -9,9 +9,9 @@ import imena.uisrael.docsmanagement.model.Organigrama;
 
 public interface OrganigramaRepo extends JpaRepository<Organigrama, Long> {
 
-    @Query("SELECT o FROM Organigrama o WHERE o.codigoPersona = :codigoPersona AND o.active = :activeStatus")
-    Organigrama findByCodigoPersona(String codigoPersona, boolean activeStatus);
+    @Query("SELECT o FROM Organigrama o WHERE o.codigoPersona = :codigoPersona AND o.accessToken.token = :accessTokenID AND o.active = :activeStatus")
+    Organigrama findByCodigoPersona(String codigoPersona,String accessTokenID, boolean activeStatus);
 
-    @Query("SELECT o FROM Organigrama o WHERE o.nivel = :nivel")
-    List<Organigrama> findByNivelOrganigrama(int nivel);
+    @Query("SELECT o FROM Organigrama o WHERE o.nivel = :nivel AND o.accessToken.token = :accessTokenID")
+    List<Organigrama> findByNivelOrganigrama(int nivel,String accessTokenID);
 }

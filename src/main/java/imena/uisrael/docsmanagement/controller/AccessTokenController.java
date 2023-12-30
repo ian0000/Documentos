@@ -69,14 +69,14 @@ public class AccessTokenController {
                     .filter(x -> keyword.equals(x.getKeyword()) == true).findFirst();
             if (accessTokenOptional.isPresent()) {
                 AccessToken accessToken = accessTokenOptional.get();
-                String texto;
+                String texto; 
                 if(accessToken.isActive() == true){
                     accessToken.setActive(false);
-                    texto = RespuestasAccessToken.TOKENACTIVADO;
+                    texto = RespuestasAccessToken.TOKENDESACTIVADO;
                     
                 }else{
                     accessToken.setActive(true);
-                    texto = RespuestasAccessToken.TOKENDESACTIVADO;
+                    texto = RespuestasAccessToken.TOKENACTIVADO;
                 }
                 accessTokenService.updateAccessToken(accessToken);
                 return ResponseEntity.ok(texto);

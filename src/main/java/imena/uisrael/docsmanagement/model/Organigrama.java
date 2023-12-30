@@ -30,6 +30,12 @@ public class Organigrama {
     private String nivel; // posicion
     private boolean active;
 
+    @JsonIgnore
+    @ToString.Exclude   
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accessTokenID") // Foreign key column name
+    private AccessToken accessToken;// esta es para tener un campo de busqueda? o le hago relacion?
+
     // tiene que hacer enlaFce conalgo? consigo mismo?
     
     @JsonIgnore

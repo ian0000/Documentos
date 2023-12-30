@@ -31,6 +31,7 @@ public class UserController {
             user = new User();
             user.setEmail(email);
             user.setPassword(password);
+            user.setActive(true);
             userRepository.save(user);
             return ResponseEntity.ok(user);
         } else {

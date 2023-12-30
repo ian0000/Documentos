@@ -11,7 +11,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import imena.uisrael.docsmanagement.model.ObjetoOrganigrama;
 import imena.uisrael.docsmanagement.model.Organigrama;
+import imena.uisrael.docsmanagement.model.Parciales;
 import imena.uisrael.docsmanagement.model.Parciales.RespuestasOrganigrama;
 import imena.uisrael.docsmanagement.services.GeneralFunctions;
 import imena.uisrael.docsmanagement.services.OrganigramaService;
@@ -27,24 +29,30 @@ public class OrganigramaController {
     private OrganigramaService organigramaService;
 
     @PostMapping("/create")
-    public ResponseEntity<Object> createOrganigrama(@RequestBody Organigrama entity, @RequestParam String padre) {
-        String respuesatmp = organigramaService.saveOrganigrama(entity, padre);
-        Set<String> validResponses = new HashSet<>(Arrays.asList(
-                RespuestasOrganigrama.USUARIO0,
-                RespuestasOrganigrama.USUARIOEXISTE,
-                RespuestasOrganigrama.FALLOGUARDADO,
-                RespuestasOrganigrama.FALLOPADRE,
-                RespuestasOrganigrama.FALLOSENECESITAREGISTRO0,
-                RespuestasOrganigrama.FALLOFALTAPADRE,
-                RespuestasOrganigrama.FALLOCAMPONIVEL
-                ));
+    public ResponseEntity<Object> createOrganigrama(@RequestBody  ObjetoOrganigrama objeto, @RequestParam String padre) {
+        String respuesatmp = organigramaService.saveOrganigrama(objeto, padre);
 
-        if (respuesatmp != null && !respuesatmp.isEmpty() && !validResponses.contains(respuesatmp)) {
+        if (respuesatmp != null && !respuesatmp.isEmpty() && !Parciales.RespuestasOrganigramaHash.containsKey(respuesatmp)) {
             return GeneralFunctions.convertJSON(
-                    GeneralFunctions.ConverToObject(respuesatmp, entity.getClass()));
+                    GeneralFunctions.ConverToObject(respuesatmp, objeto.organigrama.getClass()));
+        } else {
+            
+            HttpStatus httpStatus = Parciales.RespuestasOrganigramaHash.get(respuesatmp);
+            ResponseEntity<Object> responseEntity = new ResponseEntity<>(respuesatmp, httpStatus);
+    
+            return responseEntity;
+        }
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<Object> updateOrganigrama(@RequestBody ObjetoOrganigrama objeto, @RequestParam String padre) {
+        String respuesatmp = organigramaService.saveOrganigrama(objeto, padre);
+        
+        if (respuesatmp != null && !respuesatmp.isEmpty() && !Parciales.RespuestasOrganigramaHash.containsKey(respuesatmp)) {
+            return GeneralFunctions.convertJSON(
+                    GeneralFunctions.ConverToObject(respuesatmp, objeto.organigrama.getClass()));
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(respuesatmp);
         }
     }
-
 }
