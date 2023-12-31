@@ -48,6 +48,8 @@ public class Parciales {
         public static String DEPARTAMENTOACTIVADO = "DEPARTAMENTO ACTIVADO.";
         public static String DEPARTAMENTODESACTIVADO = "DEPARTAMENTO DESACTIVADO.";
 
+        public static String DEPARTAMENTOIDINVALIDO = "EL CODIGO DE DEPARTAMENTO ES INVALIDO.";
+
     }
 
     public static class RespuestasOrganigrama {
@@ -59,9 +61,13 @@ public class Parciales {
         public static String FALLOCAMPONIVEL = "SE INGRESO UN VALOR INCORRECTO EN EL CAMPO NIVEL, PORFAVOR INGRESE UN NUMERO.";
         public static String FALLOPADRE0 = "NO SE DEBE ASIGNAR UN CODIGO PADRE A USUARIOS NIVEL 0.";
         public static String FALLOACTUALIZAR = "ERROR AL ACTUALIZAR INTENTE NUEVAMENTE.";
+        public static String FALLOGUARDAR = "ERROR AL GUARDAR INTENTE NUEVAMENTE.";
         public static String FALLONIVEL0 = "NO PUEDEN EXISTIR MAS DE UN USUARIO CON NIVEL 0.";
         public static String EXISTEUSUARIOSNIVELX = "DEBEN EXISITIR AL MENOS 2 USUARIOS CON ESE NIVEL PARA PODER MODIFICAR USUARIO.";
 
+        public static String CODIGOPEROSNAVACIO = "EL CODIGO DE LA PERSONA NO PUEDE ESTAR VACIO";
+        public static String NOMBREPEROSNAVACIO = "EL NOMBRE DE LA PERSONA NO PUEDE ESTAR VACIO";
+        public static String NIVELVACIO = "FORMATO DE NIVEL INCORRECTO";
     }
 
     public static Map<String, HttpStatus> RespuestasUsuariosHash = new HashMap<>();
@@ -127,10 +133,18 @@ public class Parciales {
         RespuestasOrganigramaHash.put(RespuestasOrganigrama.FALLOACTUALIZAR, HttpStatus.INTERNAL_SERVER_ERROR);
         RespuestasOrganigramaHash.put(RespuestasOrganigrama.FALLONIVEL0, HttpStatus.CONFLICT);
         RespuestasOrganigramaHash.put(RespuestasOrganigrama.EXISTEUSUARIOSNIVELX, HttpStatus.BAD_REQUEST);
+        RespuestasOrganigramaHash.put(RespuestasOrganigrama.FALLOGUARDAR, HttpStatus.INTERNAL_SERVER_ERROR);
 
-        RespuestasOrganigramaHash.put(RespuestasAccessToken.TOKENNOENCONTRADO, HttpStatus.INTERNAL_SERVER_ERROR);
         RespuestasOrganigramaHash.put(RespuestasGenerales.JSONINCORRECTO, HttpStatus.BAD_REQUEST);
         RespuestasOrganigramaHash.put(RespuestasGenerales.ERRORINTERNO, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        RespuestasOrganigramaHash.put(RespuestasOrganigrama.CODIGOPEROSNAVACIO, HttpStatus.BAD_REQUEST);
+        RespuestasOrganigramaHash.put(RespuestasOrganigrama.NOMBREPEROSNAVACIO, HttpStatus.BAD_REQUEST);
+        RespuestasOrganigramaHash.put(RespuestaDepartamentos.DEPARTAMENTOIDINVALIDO, HttpStatus.BAD_REQUEST);
+        RespuestasOrganigramaHash.put(RespuestasAccessToken.TOKENNOENCONTRADO, HttpStatus.NOT_FOUND);
+        RespuestasOrganigramaHash.put(RespuestaDepartamentos.DEPARTAMENTONOENCONTRADO, HttpStatus.NOT_FOUND);
+        RespuestasOrganigramaHash.put(RespuestaDepartamentos.DEPARTAMENTOIDINVALIDO, HttpStatus.BAD_REQUEST);
+        RespuestasOrganigramaHash.put(RespuestaDepartamentos.DEPARTAMENTODESACTIVADO, HttpStatus.BAD_REQUEST);
 
     }
 }

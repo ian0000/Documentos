@@ -160,7 +160,6 @@ public class AccessTokenService {
         User user = userRepository.findByEmailAndPassword(objeto.user.getEmail(), objeto.user.getPassword());
         if (user != null) {
             // si keyword null retornar todos
-            //TODO: QUE SEA UN LIKE NO UN =
             String keyword = objeto.accessToken.getKeyword();
             if (user.getAccessTokens() != null && !user.getAccessTokens().isEmpty()) {
                 List<AccessToken> accessTokenOptional = user.getAccessTokens().stream().collect(Collectors.toList());

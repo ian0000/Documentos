@@ -6,15 +6,24 @@ import imena.uisrael.docsmanagement.model.Organigrama;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
-@AllArgsConstructor
 public class ObjetoOrganigrama {
-    
-    public Organigrama organigramanuevo;
-    public Departamento departamento;
-    public AccessToken accessToken;
-    public Organigrama organigramaviejo;
-    public long codPadre;
-    public boolean llevarorganigramas;//en caso de cambiar de nivel se true se lleva sus organigramaas o false los reparte a su nivel
-}
 
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ObjetoCrearOrganigrama {
+        public Organigrama organigramanuevo;
+        public Departamento departamento;
+        public AccessToken accessToken;
+        public String codSuper; // este puede ser nulo
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ObjetoUpdateOrganigrama {
+        public Organigrama organigramanuevo;
+        public Departamento departamento;
+        public AccessToken accessToken;
+        public long codSuper; // este puede ser nulo
+        public Organigrama organigramaviejo; 
+    }
+}
