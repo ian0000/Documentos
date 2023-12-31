@@ -22,26 +22,26 @@ import lombok.ToString;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AccessToken {
+public class Departamento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long accessTokenID;
-
-    private String token;
-    private String keyword;// puede tener varias claves pero con esto encuentra la especifca?
+    private Long departamentoID;
+    private String nombreDepartamento;
     private boolean active;
 
     @JsonIgnore
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userID")
-    private User user;
+    @JoinColumn(name = "accessTokenID")
+    private AccessToken accessToken;
 
+    
     // los departamento tendran la misma llave es para mas por organizacion? sehhh
     @JsonIgnore
     @ToString.Exclude
-    @OneToMany(mappedBy = "accessToken", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Departamento> departamentos;
+    @OneToMany(mappedBy = "departamento", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Organigrama> organigramas;
+
 
 }

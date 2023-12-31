@@ -30,18 +30,17 @@ public class Organigrama {
     private String nivel; // posicion
     private boolean active;
 
+    // ?el access token viene de departamento y ya no directo
     @JsonIgnore
-    @ToString.Exclude   
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "accessTokenID") // Foreign key column name
-    private AccessToken accessToken;// esta es para tener un campo de busqueda? o le hago relacion?
+    @JoinColumn(name = "codigo_padre")
+    private Organigrama padre;
 
-    // tiene que hacer enlaFce conalgo? consigo mismo?
-    
     @JsonIgnore
-    @ToString.Exclude   
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "codigo_padre") // Foreign key column name
-    private Organigrama padre; // Reference to the parent Organigrama
+    @JoinColumn(name = "departamentoID")
+    private Departamento departamento;
 
 }
