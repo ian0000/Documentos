@@ -45,6 +45,9 @@ public class AccessTokenService {
             if (user.getAccessTokens() == null) {
                 user.setAccessTokens(new ArrayList<AccessToken>());
             }
+            if(!user.isActive()){
+                return RespuestasUsuarios.USUARIODESACTIVADO;
+            }
             Optional<AccessToken> accessTokenOptional = user.getAccessTokens().stream()
                     .filter(x -> objeto.accessToken.getKeyword().equals(x.getKeyword()) == true).findFirst();
             if (accessTokenOptional.isPresent()) {
@@ -88,6 +91,9 @@ public class AccessTokenService {
             if (user.getAccessTokens() == null) {
                 user.setAccessTokens(new ArrayList<AccessToken>());
             }
+            if(!user.isActive()){
+                return RespuestasUsuarios.USUARIODESACTIVADO;
+            }
             Optional<AccessToken> accessTokenOptional = user.getAccessTokens().stream()
                     .filter(x -> objeto.accessToken.getKeyword().equals(x.getKeyword()) == true).findFirst();
             if (!accessTokenOptional.isPresent()) {
@@ -127,6 +133,9 @@ public class AccessTokenService {
             if (user.getAccessTokens() == null) {
                 user.setAccessTokens(new ArrayList<AccessToken>());
             }
+            if(!user.isActive()){
+                return RespuestasUsuarios.USUARIODESACTIVADO;
+            }
             Optional<AccessToken> accessTokenOptional = user.getAccessTokens().stream()
                     .filter(x -> objeto.accessToken.getKeyword().equals(x.getKeyword()) == true).findFirst();
             if (!accessTokenOptional.isPresent()) {
@@ -161,6 +170,10 @@ public class AccessTokenService {
         if (user != null) {
             // si keyword null retornar todos
             String keyword = objeto.accessToken.getKeyword();
+            
+            if(!user.isActive()){
+                return RespuestasUsuarios.USUARIODESACTIVADO;
+            }
             if (user.getAccessTokens() != null && !user.getAccessTokens().isEmpty()) {
                 List<AccessToken> accessTokenOptional = user.getAccessTokens().stream().collect(Collectors.toList());
                 if (keyword != null && keyword == "" && keyword.isBlank()) {

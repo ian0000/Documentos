@@ -12,7 +12,6 @@ import imena.uisrael.docsmanagement.model.Departamento;
 import imena.uisrael.docsmanagement.model.Parciales.RespuestaDepartamentos;
 import imena.uisrael.docsmanagement.model.Parciales.RespuestasAccessToken;
 import imena.uisrael.docsmanagement.model.Parciales.RespuestasGenerales;
-import imena.uisrael.docsmanagement.model.Parciales.RespuestasUsuarios;
 import imena.uisrael.docsmanagement.repo.AccessTokenRepo;
 import imena.uisrael.docsmanagement.repo.DepartamentoRepo;
 
@@ -29,6 +28,9 @@ public class DepartamentoService {
         }
         AccessToken accessToken = accessTokenRepo.findByToken(objeto.accessToken.getToken());
         if (accessToken != null) {
+            if (!accessToken.isActive()) {
+                return RespuestasAccessToken.TOKENDESACTIVADO;
+            }
             Departamento departamentoexiste = departamentoRepo.findByNombre(objeto.departamento.getNombreDepartamento(),
                     accessToken.getToken());
             if (departamentoexiste == null) {
@@ -56,6 +58,9 @@ public class DepartamentoService {
         }
         AccessToken accessToken = accessTokenRepo.findByToken(objeto.accessToken.getToken());
         if (accessToken != null) {
+            if (!accessToken.isActive()) {
+                return RespuestasAccessToken.TOKENDESACTIVADO;
+            }
             Departamento departamentoexiste = departamentoRepo.findByNombre(objeto.departamento.getNombreDepartamento(),
                     accessToken.getToken());
             if (departamentoexiste != null) {
@@ -81,6 +86,9 @@ public class DepartamentoService {
         }
         AccessToken accessToken = accessTokenRepo.findByToken(objeto.accessToken.getToken());
         if (accessToken != null) {
+            if (!accessToken.isActive()) {
+                return RespuestasAccessToken.TOKENDESACTIVADO;
+            }
             Departamento departamentoexiste = departamentoRepo.findByNombre(objeto.departamento.getNombreDepartamento(),
                     accessToken.getToken());
             if (departamentoexiste != null) {
@@ -107,6 +115,9 @@ public class DepartamentoService {
         }
         AccessToken accessToken = accessTokenRepo.findByToken(objeto.accessToken.getToken());
         if (accessToken != null) {
+            if (!accessToken.isActive()) {
+                return RespuestasAccessToken.TOKENDESACTIVADO;
+            }
             String keyword = objeto.departamento.getNombreDepartamento();
             if (accessToken.getDepartamentos() != null && !accessToken.getDepartamentos().isEmpty()) {
                 List<Departamento> departamentoOpcional = accessToken.getDepartamentos().stream()

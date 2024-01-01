@@ -63,11 +63,15 @@ public class Parciales {
         public static String FALLOACTUALIZAR = "ERROR AL ACTUALIZAR INTENTE NUEVAMENTE.";
         public static String FALLOGUARDAR = "ERROR AL GUARDAR INTENTE NUEVAMENTE.";
         public static String FALLONIVEL0 = "NO PUEDEN EXISTIR MAS DE UN USUARIO CON NIVEL 0.";
-        public static String EXISTEUSUARIOSNIVELX = "DEBEN EXISITIR AL MENOS 2 USUARIOS CON ESE NIVEL PARA PODER MODIFICAR USUARIO.";
-
+        public static String EXISTEUSUARIOSNIVELX = "DEBEN EXISITIR AL MENOS 2 USUARIOS CON ESTE NIVEL, O TENER LLEVARORGANIGRAMAS COMO VERDAD PARA PODER MOVER DE NIVEL ESTE ITEM.";
+        public static String ORGANIGRAMANOEXISTE = "NO ES POSIBLE ACTUALIZAR.ORGANIGRAMA NO EXISTE.";
         public static String CODIGOPEROSNAVACIO = "EL CODIGO DE LA PERSONA NO PUEDE ESTAR VACIO";
         public static String NOMBREPEROSNAVACIO = "EL NOMBRE DE LA PERSONA NO PUEDE ESTAR VACIO";
         public static String NIVELVACIO = "FORMATO DE NIVEL INCORRECTO";
+        public static String NIVEL0 = "NO SE PUEDE MODIFICAR EL NIVEL DE UN USUARIO NIVEL 0.";
+
+        
+
     }
 
     public static Map<String, HttpStatus> RespuestasUsuariosHash = new HashMap<>();
@@ -101,6 +105,8 @@ public class Parciales {
         RespuestasAccessTokenHash.put(RespuestasAccessToken.PARAMETROKEYWORDNULO, HttpStatus.BAD_REQUEST);
 
         RespuestasAccessTokenHash.put(RespuestasUsuarios.USUARIOCONTRASENIAINCORRECTOS, HttpStatus.NOT_FOUND);
+        RespuestasAccessTokenHash.put(RespuestasUsuarios.USUARIODESACTIVADO, HttpStatus.CONFLICT);
+
         RespuestasAccessTokenHash.put(RespuestasGenerales.JSONINCORRECTO, HttpStatus.BAD_REQUEST);
         RespuestasAccessTokenHash.put(RespuestasGenerales.ERRORINTERNO, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -134,6 +140,8 @@ public class Parciales {
         RespuestasOrganigramaHash.put(RespuestasOrganigrama.FALLONIVEL0, HttpStatus.CONFLICT);
         RespuestasOrganigramaHash.put(RespuestasOrganigrama.EXISTEUSUARIOSNIVELX, HttpStatus.BAD_REQUEST);
         RespuestasOrganigramaHash.put(RespuestasOrganigrama.FALLOGUARDAR, HttpStatus.INTERNAL_SERVER_ERROR);
+        RespuestasOrganigramaHash.put(RespuestasOrganigrama.ORGANIGRAMANOEXISTE, HttpStatus.CONFLICT);
+        RespuestasOrganigramaHash.put(RespuestasOrganigrama.NIVEL0, HttpStatus.CONFLICT);
 
         RespuestasOrganigramaHash.put(RespuestasGenerales.JSONINCORRECTO, HttpStatus.BAD_REQUEST);
         RespuestasOrganigramaHash.put(RespuestasGenerales.ERRORINTERNO, HttpStatus.INTERNAL_SERVER_ERROR);

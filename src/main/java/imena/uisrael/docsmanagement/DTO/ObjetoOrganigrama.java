@@ -23,7 +23,9 @@ public class ObjetoOrganigrama {
         public Organigrama organigramanuevo;
         public Departamento departamento;
         public AccessToken accessToken;
-        public long codSuper; // este puede ser nulo
-        public Organigrama organigramaviejo; 
+        public String codSuper; // este puede ser nulo
+        public Organigrama organigramaviejo;
+        public boolean llevarorganigramas;// en caso de cambiar de nivel se true se lleva sus organigramaas o false los
+                                          // reparte a su nivel
     }
 }
