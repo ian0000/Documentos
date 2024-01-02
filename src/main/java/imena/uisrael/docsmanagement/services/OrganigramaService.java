@@ -3,6 +3,8 @@ package imena.uisrael.docsmanagement.services;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,8 +19,10 @@ import imena.uisrael.docsmanagement.model.Parciales.RespuestasGenerales;
 import imena.uisrael.docsmanagement.model.Parciales.RespuestasOrganigrama;
 import imena.uisrael.docsmanagement.repo.DepartamentoRepo;
 import imena.uisrael.docsmanagement.repo.OrganigramaRepo;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class OrganigramaService {
     @Autowired
     private OrganigramaRepo organigramaRepo;
@@ -39,19 +43,23 @@ public class OrganigramaService {
             organigramanuevo.setActive(true);
             String codSuper = objeto.codSuper;
 
-            if (organigramanuevo.getNivel().equals("0") && codSuper == null) {
+            if ((organigramanuevo.getNivel() != null && organigramanuevo.getNivel().equals("0")) && codSuper == null) {
                 // se busca si ya no existen niveles 0
+
                 var tmp = organigramaRepo.findByNivel(organigramanuevo.getNivel(), objeto.accessToken.getToken())
                         .toArray();
                 if (tmp.length != 0) {
                     return RespuestasOrganigrama.FALLONIVEL0;
                 }
                 return guardarOrganigrama(organigramanuevo, objeto.departamento, null, false, false);
-            } else if (organigramanuevo.getNivel().equals("0") && codSuper != null) {
+            } else if ((organigramanuevo.getNivel() != null && organigramanuevo.getNivel().equals("0"))
+                    && codSuper != null) {
                 return RespuestasOrganigrama.FALLOPADRE0;
-            } else if (!organigramanuevo.getNivel().equals("0") && codSuper == null) {
+            } else if ((organigramanuevo.getNivel() != null && !organigramanuevo.getNivel().equals("0"))
+                    && codSuper == null) {
                 return RespuestasOrganigrama.FALLOPADRE;
-            } else if (!organigramanuevo.getNivel().equals("0") && codSuper != null) {
+            } else if ((organigramanuevo.getNivel() == null || organigramanuevo.getNivel().equals("0"))
+                    && codSuper != null) {
                 return guardarOrganigrama(organigramanuevo, objeto.departamento, codSuper, false, false);
             } else {
                 return RespuestasOrganigrama.FALLOGUARDAR;
@@ -59,6 +67,8 @@ public class OrganigramaService {
         } else {
             return RespuestasOrganigrama.USUARIOEXISTE;
         }
+        // TODO: si existe un usuario 0 desactivado ya no dejarlo reactivar o no se
+        // puede desactivar
     }
 
     public String updateOrganigrama(ObjetoUpdateOrganigrama objeto) {
@@ -82,61 +92,77 @@ public class OrganigramaService {
             // si solo existe ese organigrama en ese nivel todos los subs se deben mover con
             // el si se cambia
 
-            if (objeto.organigramanuevo.getNivel() != null) {
-                // ver que el nivel 0 no se repita Y que no pueda ser modificado
+            // if (objeto.organigramanuevo.getNivel() != null) {//SI PUEDE VENIR NULO SOLO
+            // ES PARA CAMBIAR X COSA
+            // ver que el nivel 0 no se repita Y que no pueda ser modificado
+
+            if (objeto.organigramanuevo.getCodigoPersona() != null
+                    && !objeto.organigramanuevo.getCodigoPersona().isBlank()) {
                 existeorganigrama.setCodigoPersona(objeto.organigramanuevo.getCodigoPersona());
+
+            }
+            if (objeto.organigramanuevo.getNombrePersona() != null
+                    && !objeto.organigramanuevo.getNombrePersona().isBlank()) {
                 existeorganigrama.setNombrePersona(objeto.organigramanuevo.getNombrePersona());
-                //existeorganigrama.setActive(objeto.organigramanuevo.isActive());
-                //TODO no puedo modificar el estado por que si
-                // esto solo para setear nivel
-                // aqui igual irian la funcion para cambiar y reasignar los de abajo
-                boolean modificarsub = false;
-                if (existeorganigrama.getNivel() != objeto.organigramanuevo.getNivel()) {
-                    if (existeorganigrama.getNivel().equals("0")) {
-                        return RespuestasOrganigrama.NIVEL0;
-                    } else if (objeto.organigramanuevo.getNivel().equals("0")) {
-                        return RespuestasOrganigrama.FALLONIVEL0;
+
+            }
+            // existeorganigrama.setActive(objeto.organigramanuevo.isActive());
+            // TODO no puedo modificar el estado por que si
+            // esto solo para setear nivel
+            // aqui igual irian la funcion para cambiar y reasignar los de abajo
+            boolean modificarsub = false;
+            Boolean llevarorganigramas = objeto.llevarorganigramas;
+            if (objeto.organigramanuevo.getNivel() != null
+                    && existeorganigrama.getNivel() != objeto.organigramanuevo.getNivel()) {
+                if (existeorganigrama.getNivel().equals("0")) {
+                    return RespuestasOrganigrama.NIVEL0;
+                } else if (objeto.organigramanuevo.getNivel().equals("0")) {
+                    return RespuestasOrganigrama.FALLONIVEL0;
+                } else {
+                    // aqui los niveles son distintos si o si
+                    // tengo que ver si hay mas con este nivel// si solo hay uno debe estar puesta
+                    // la opcion de llevarorganigramas para poder cambiar de nivel caso contrario
+                    // sigale nomas
+                    int cantidadmismonivel = organigramaRepo.findByNivel(existeorganigrama.getNivel(),
+                            existeorganigrama.getDepartamento().getAccessToken().getToken()).size();
+                    if (cantidadmismonivel == 1 && llevarorganigramas != null && !objeto.llevarorganigramas) {
+                        return RespuestasOrganigrama.EXISTEUSUARIOSNIVELX;
                     } else {
-                        // aqui los niveles son distintos si o si
-                        // tengo que ver si hay mas con este nivel// si solo hay uno debe estar puesta
-                        // la opcion de llevarorganigramas para poder cambiar de nivel caso contrario
-                        // sigale nomas
-                        int cantidadmismonivel = organigramaRepo.findByNivel(existeorganigrama.getNivel(),
-                                existeorganigrama.getDepartamento().getAccessToken().getToken()).size();
-                        if (cantidadmismonivel == 1 && !objeto.llevarorganigramas) {
-                            return RespuestasOrganigrama.EXISTEUSUARIOSNIVELX;
-                        } else {
-                            existeorganigrama.setNivel(objeto.organigramanuevo.getNivel());
-                            // AQUI SI MODIFICAR TODOS LOS USUARIOS DE NIVEL
-                            modificarsub = true;
-                        }
-
+                        existeorganigrama.setNivel(objeto.organigramanuevo.getNivel());
+                        // AQUI SI MODIFICAR TODOS LOS USUARIOS DE NIVEL
+                        modificarsub = true;
                     }
-                }
-                // cambiar el padre va de nuez
-                String codSuper = objeto.codSuper;
-                if (existeorganigrama.getNivel().equals("0") && codSuper == null) {
-                    // no se hace nada//lo dejo para verificaciones nada mas
-                } else if (existeorganigrama.getNivel().equals("0") && codSuper != null) {
-                    return RespuestasOrganigrama.FALLOPADRE0;
-                } else if (!existeorganigrama.getNivel().equals("0") && codSuper == null) {
-                    return RespuestasOrganigrama.FALLOPADRE;
-                } else if (!existeorganigrama.getNivel().equals("0") && codSuper != null) {
 
-                    // TODO: si organigrama mismo nivel no se puede modificar el nivel a menos de
-                    // que si selleve todos
+                }
+            }
+            // cambiar el padre va de nuez
+            String codSuper = objeto.codSuper;
+            if (existeorganigrama.getNivel().equals("0") && codSuper == null) {
+                return guardarOrganigrama(existeorganigrama, existeorganigrama.getDepartamento(), codSuper,
+                        false, modificarsub);
+            } else if (existeorganigrama.getNivel().equals("0") && codSuper != null) {
+                return RespuestasOrganigrama.FALLOPADRE0;
+            } else if (!existeorganigrama.getNivel().equals("0") && codSuper == null) {
+                return RespuestasOrganigrama.FALLOPADRE;
+            } else if (!existeorganigrama.getNivel().equals("0") && codSuper != null) {
+
+                // TODO: si organigrama mismo nivel no se puede modificar el nivel a menos de
+                // que si selleve todos
+                if (llevarorganigramas != null) {
                     return guardarOrganigrama(existeorganigrama, existeorganigrama.getDepartamento(), codSuper,
                             objeto.llevarorganigramas, modificarsub);
-                    // aqui ya viene encriptado
                 } else {
-                    return RespuestasOrganigrama.FALLOGUARDAR;
+                    return guardarOrganigrama(existeorganigrama, existeorganigrama.getDepartamento(), codSuper,
+                            false, modificarsub);
                 }
+                // aqui ya viene encriptado
+            } else {
+                return RespuestasOrganigrama.FALLOGUARDAR;
             }
 
         } else {
             return RespuestasOrganigrama.ORGANIGRAMANOEXISTE;
         }
-        return "";
     }
 
     public String stateOrganigrama(ObjetoCrearOrganigrama objeto) {
@@ -150,24 +176,34 @@ public class OrganigramaService {
     public String guardarOrganigrama(Organigrama organigramanuevo, Departamento departamentoenvio, String codsuper,
             boolean llevarorganigramas, boolean modificarsub) {
 
+        String numerotmp = organigramanuevo.getNivel();
         Departamento departamento = departamentoRepo.findById(departamentoenvio.getDepartamentoID()).get();
-
         if (departamento != null && departamento.isActive()) {
             organigramanuevo.setDepartamento(departamento);
             if (codsuper != null) {
+
                 Organigrama organigramasuper = organigramaRepo.findByCodigoPersona(codsuper,
                         departamento.getAccessToken().getToken());
                 if (organigramasuper != null) {
+                    int nivelactual = Integer.parseInt(organigramasuper.getNivel()) + 1;
+                    organigramanuevo.setNivel(String.valueOf(nivelactual));
                     organigramanuevo.setPadre(organigramasuper);
                 } else {
                     return RespuestasOrganigrama.FALLOFALTAPADRE;
                 }
             }
-            try {
-                var res = organigramaRepo.save(organigramanuevo);
-                // hasta aqui se guardo
-                if (modificarsub) {
-                    modificarSub(organigramanuevo, llevarorganigramas);
+            try { // hasta aqui se guardo
+                Organigrama res = new Organigrama();
+                if (llevarorganigramas) {
+
+                    if (modificarsub) {
+                        modificarSub(organigramanuevo, llevarorganigramas, false);
+                    }
+                    res = organigramaRepo.save(organigramanuevo);
+
+                } else {
+                    res = organigramaRepo.save(organigramanuevo);
+                    modificarSub(organigramanuevo, llevarorganigramas, !organigramanuevo.getNivel().equals(numerotmp));
                 }
                 return GeneralFunctions.ConverToString(res);
             } catch (Exception e) {
@@ -180,7 +216,7 @@ public class OrganigramaService {
         }
     }
 
-    public void modificarSub(Organigrama organigrama, boolean llevarorganigramas) {
+    public void modificarSub(Organigrama organigrama, boolean llevarorganigramas, boolean sumardigito) {
         // dos casos //si llevarorganigramas tengo que hacer que cada uno de los subs
         // para abajo se empiecen a actualizar el nivel
         // else que solo se reorganicen los subs proximos a los sup restantes en el
@@ -188,34 +224,50 @@ public class OrganigramaService {
         if (llevarorganigramas) {
             // ahora modificar todos los niveles de los anteriores buscar todos los que
             // tengan de padre a x y de ahi cambiar nivel y ya
-            cambiarNivelSUb(organigrama);
+            cambiarNivelSUb(organigrama, Integer.parseInt(organigrama.getNivel()));
 
         } else {
-            List<Organigrama> organigramasmismonivel = organigramaRepo.findByNivel(organigrama.getNivel(),
+
+            // si mandan por aca y se mantienen el mismo nivel solo se reparten
+            // lo que pasa es que si es el mismo nivel se va a daniar
+            // y si le hago con el mas uno ya no
+            int nivelactual = Integer.parseInt(organigrama.getNivel());
+
+            // con + 1 funciona lo que quiero pero
+            // sin + 1 funciona lo otro
+            if (sumardigito) {
+                nivelactual = nivelactual + 1;
+            }
+
+            List<Organigrama> organigramasmismonivel = organigramaRepo.findByNivel(String.valueOf(nivelactual),
                     organigrama.getDepartamento().getAccessToken().getToken());
+
             List<Organigrama> organigramassubs = organigramaRepo.findByIDSuper(organigrama.getOrganigramaID(),
                     organigrama.getDepartamento().getAccessToken().getToken());
-            int nivelactual = Integer.parseInt(organigrama.getNivel()) + 1;
             for (Organigrama organigramaitem : organigramassubs) {
                 Organigrama mejorsuper = mejorSuper(organigramasmismonivel);
                 if (mejorsuper != null) {
                     organigramaitem.setPadre(mejorsuper);
                 }
-                organigramaitem.setNivel(String.valueOf(nivelactual));
+                organigramaitem.setNivel(String.valueOf(nivelactual + 1));
+                organigramaRepo.save(organigramaitem);
             }
-            organigramaRepo.saveAll(organigramassubs);
+            // organigramaRepo.saveAll(organigramassubs);
         }
 
     }
 
-    public void cambiarNivelSUb(Organigrama organigramasuper) {
+    public void cambiarNivelSUb(Organigrama organigramasuper, int nivelactual) {
         List<Organigrama> listaOrganigramasSub = organigramaRepo.findByIDSuper(organigramasuper.getOrganigramaID(),
                 organigramasuper.getDepartamento().getAccessToken().getToken());
+
         if (listaOrganigramasSub != null) {
-            int nivelactual = Integer.parseInt(organigramasuper.getNivel()) + 1;
+            nivelactual = nivelactual + 1;
+
             for (Organigrama organigrama : listaOrganigramasSub) {
                 organigramaRepo.updateOrganigramaNivel(String.valueOf(nivelactual), organigrama.getOrganigramaID());
-                cambiarNivelSUb(organigrama);
+                organigrama.setNivel(String.valueOf(nivelactual));
+                cambiarNivelSUb(organigrama, nivelactual);
             }
         }
     }
@@ -237,6 +289,7 @@ public class OrganigramaService {
                 mejorsuper = supervisor;
             }
         }
+
         return mejorsuper;
     }
 
@@ -269,15 +322,6 @@ public class OrganigramaService {
         if (objeto == null || objeto.organigramanuevo == null ||
                 objeto.departamento == null || objeto.accessToken == null) {
             return RespuestasGenerales.JSONINCORRECTO;
-        }
-        if (objeto.organigramanuevo.getCodigoPersona().isEmpty()
-                || objeto.organigramanuevo.getCodigoPersona().isBlank()) {
-            return RespuestasOrganigrama.CODIGOPEROSNAVACIO;
-        }
-        if (objeto.organigramanuevo.getNombrePersona().isEmpty()
-                || objeto.organigramanuevo.getNombrePersona().isBlank()) {
-
-            return RespuestasOrganigrama.NOMBREPEROSNAVACIO;
         }
         if (objeto.departamento.getDepartamentoID() == null) {
 
