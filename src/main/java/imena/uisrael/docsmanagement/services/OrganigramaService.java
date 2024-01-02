@@ -228,13 +228,10 @@ public class OrganigramaService {
 
         } else {
 
-            // si mandan por aca y se mantienen el mismo nivel solo se reparten
-            // lo que pasa es que si es el mismo nivel se va a daniar
-            // y si le hago con el mas uno ya no
             int nivelactual = Integer.parseInt(organigrama.getNivel());
 
-            // con + 1 funciona lo que quiero pero
-            // sin + 1 funciona lo otro
+            // con + 1 funciona lo que quiero pero es el mismo nivel pero se reparte para los otros
+            // sin + 1 funciona lo otro es distinto nivel y se reparte para los del anterior nivel
             if (sumardigito) {
                 nivelactual = nivelactual + 1;
             }
