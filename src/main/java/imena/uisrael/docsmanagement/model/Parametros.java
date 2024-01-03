@@ -1,5 +1,7 @@
 package imena.uisrael.docsmanagement.model;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -11,6 +13,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
@@ -22,24 +25,23 @@ import lombok.ToString;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Departamento {
-
+public class Parametros {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long departamentoID;
-    private String nombreDepartamento;
-    private boolean active;
+    private long parametrosID;
+    private String codigoParametro;
+    @Lob
+    private String jsonParametros;
+    private Date ultimaModificacion;
+    private boolean isActive;
 
     @JsonIgnore
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accessTokenID")
     private AccessToken accessToken;
-
-    // los departamento tendran la misma llave es para mas por organizacion? sehhh
     @JsonIgnore
     @ToString.Exclude
-    @OneToMany(mappedBy = "departamento", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Organigrama> organigramas;
-
+    @OneToMany(mappedBy = "parametros", cascade = CascadeType.ALL)
+    private List<VersionesParametros> versiones = new ArrayList<>();
 }

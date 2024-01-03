@@ -43,5 +43,9 @@ public class AccessToken {
     @ToString.Exclude
     @OneToMany(mappedBy = "accessToken", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Departamento> departamentos;
+    @JsonIgnore
+    @ToString.Exclude
+    @OneToMany(mappedBy = "accessToken", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Parametros> parametros;
 
 }

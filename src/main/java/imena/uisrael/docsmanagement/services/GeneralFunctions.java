@@ -40,8 +40,9 @@ public class GeneralFunctions {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             if (List.class.isAssignableFrom(objectClass)) {
-                return objectMapper.readValue(objeto, new TypeReference<List<Object>>() {});
-            }else {
+                return objectMapper.readValue(objeto, new TypeReference<List<Object>>() {
+                });
+            } else {
                 // Deserialize the JSON string into a single object of the specified class
                 return objectMapper.readValue(objeto, objectClass);
             }
@@ -49,11 +50,11 @@ public class GeneralFunctions {
             e.printStackTrace();
             return "";
         }
-       
 
     }
 
-    public static ResponseEntity<Object> DevolverRespuesta(String resultado, Class<?> objectClass, Map<String, HttpStatus> responseHash) {
+    public static ResponseEntity<Object> DevolverRespuesta(String resultado, Class<?> objectClass,
+            Map<String, HttpStatus> responseHash) {
         if (resultado != null && !resultado.isEmpty() && !responseHash.containsKey(resultado)) {
             return GeneralFunctions.convertJSON(GeneralFunctions.ConverToObject(resultado, objectClass));
         } else {
@@ -62,7 +63,7 @@ public class GeneralFunctions {
             return responseEntity;
         }
     }
-    
+
     public static String verificarCorreoPassword(String email, String password) {
         if (email == null || email.isBlank() || email.isEmpty()) {
             return RespuestasUsuarios.USUARIOEMAILBLANCO;

@@ -1,14 +1,11 @@
 package imena.uisrael.docsmanagement.model;
 
-import java.util.List;
+import java.util.Date;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,17 +14,17 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
-
+public class Documentos {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userID;
+    private long documentosID;
+    private String nombreDocumento;
+    private byte[] base64;
+    private Date fechaUltimaModificaicon;
+    private String jsonDatosDocumento;
 
-    private String email;
-    private String password;
-    private boolean active;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<AccessToken> accessTokens;
-
+    //aqui deberia tener dos de para quien es y de quien es
+    //con el token
+    //el parametro y su version
+    
 }

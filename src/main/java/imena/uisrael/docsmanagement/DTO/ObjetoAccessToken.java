@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ObjetoAccessToken {
-    //de aqui solo necesito email password keyword
+    // de aqui solo necesito email password keyword
     public AccessToken accessToken;
     public User user;
 }

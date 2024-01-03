@@ -28,7 +28,7 @@ public class AccessTokenService {
     private UserRepo userRepository;
 
     public String saveAccessToken(ObjetoAccessToken objeto) {
-          if (objeto == null || objeto.accessToken == null || objeto.user == null) {
+        if (objeto == null || objeto.accessToken == null || objeto.user == null) {
             return RespuestasGenerales.JSONINCORRECTO;
         }
         String verificacion = GeneralFunctions.verificarCorreoPassword(objeto.user.getEmail(),
@@ -45,7 +45,7 @@ public class AccessTokenService {
             if (user.getAccessTokens() == null) {
                 user.setAccessTokens(new ArrayList<AccessToken>());
             }
-            if(!user.isActive()){
+            if (!user.isActive()) {
                 return RespuestasUsuarios.USUARIODESACTIVADO;
             }
             Optional<AccessToken> accessTokenOptional = user.getAccessTokens().stream()
@@ -91,7 +91,7 @@ public class AccessTokenService {
             if (user.getAccessTokens() == null) {
                 user.setAccessTokens(new ArrayList<AccessToken>());
             }
-            if(!user.isActive()){
+            if (!user.isActive()) {
                 return RespuestasUsuarios.USUARIODESACTIVADO;
             }
             Optional<AccessToken> accessTokenOptional = user.getAccessTokens().stream()
@@ -116,7 +116,7 @@ public class AccessTokenService {
     }
 
     public String changeStateAccessToken(ObjetoAccessToken objeto) {
-         if (objeto == null || objeto.accessToken == null || objeto.user == null) {
+        if (objeto == null || objeto.accessToken == null || objeto.user == null) {
             return RespuestasGenerales.JSONINCORRECTO;
         }
         String verificacion = GeneralFunctions.verificarCorreoPassword(objeto.user.getEmail(),
@@ -133,7 +133,7 @@ public class AccessTokenService {
             if (user.getAccessTokens() == null) {
                 user.setAccessTokens(new ArrayList<AccessToken>());
             }
-            if(!user.isActive()){
+            if (!user.isActive()) {
                 return RespuestasUsuarios.USUARIODESACTIVADO;
             }
             Optional<AccessToken> accessTokenOptional = user.getAccessTokens().stream()
@@ -158,7 +158,7 @@ public class AccessTokenService {
     }
 
     public String findByKeyword(ObjetoAccessToken objeto) {
-         if (objeto == null || objeto.accessToken == null || objeto.user == null) {
+        if (objeto == null || objeto.accessToken == null || objeto.user == null) {
             return RespuestasGenerales.JSONINCORRECTO;
         }
         String verificacion = GeneralFunctions.verificarCorreoPassword(objeto.user.getEmail(),
@@ -170,8 +170,8 @@ public class AccessTokenService {
         if (user != null) {
             // si keyword null retornar todos
             String keyword = objeto.accessToken.getKeyword();
-            
-            if(!user.isActive()){
+
+            if (!user.isActive()) {
                 return RespuestasUsuarios.USUARIODESACTIVADO;
             }
             if (user.getAccessTokens() != null && !user.getAccessTokens().isEmpty()) {

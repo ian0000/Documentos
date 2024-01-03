@@ -69,8 +69,9 @@ public class Parciales {
         public static String NOMBREPEROSNAVACIO = "EL NOMBRE DE LA PERSONA NO PUEDE ESTAR VACIO";
         public static String NIVELVACIO = "FORMATO DE NIVEL INCORRECTO";
         public static String NIVEL0 = "NO SE PUEDE MODIFICAR EL NIVEL DE UN USUARIO NIVEL 0.";
-
-        
+        public static String ORGANIGRAMAACTIVADO = "ORGANIGRAMA ACTIVADO.";
+        public static String ORGANIGRAMADESACTIVADO = "ORGANIGRAMA DESACTIVADO.";
+        public static String ORGANIGRAMAVACIO = "NO EXISTEN REGISTROS CON EL TOKEN.";
 
     }
 
@@ -142,6 +143,9 @@ public class Parciales {
         RespuestasOrganigramaHash.put(RespuestasOrganigrama.FALLOGUARDAR, HttpStatus.INTERNAL_SERVER_ERROR);
         RespuestasOrganigramaHash.put(RespuestasOrganigrama.ORGANIGRAMANOEXISTE, HttpStatus.CONFLICT);
         RespuestasOrganigramaHash.put(RespuestasOrganigrama.NIVEL0, HttpStatus.CONFLICT);
+        RespuestasOrganigramaHash.put(RespuestasOrganigrama.ORGANIGRAMAACTIVADO, HttpStatus.OK);
+        RespuestasOrganigramaHash.put(RespuestasOrganigrama.ORGANIGRAMADESACTIVADO, HttpStatus.OK);
+        RespuestasOrganigramaHash.put(RespuestasOrganigrama.ORGANIGRAMAVACIO, HttpStatus.CONFLICT);
 
         RespuestasOrganigramaHash.put(RespuestasGenerales.JSONINCORRECTO, HttpStatus.BAD_REQUEST);
         RespuestasOrganigramaHash.put(RespuestasGenerales.ERRORINTERNO, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -150,6 +154,8 @@ public class Parciales {
         RespuestasOrganigramaHash.put(RespuestasOrganigrama.NOMBREPEROSNAVACIO, HttpStatus.BAD_REQUEST);
         RespuestasOrganigramaHash.put(RespuestaDepartamentos.DEPARTAMENTOIDINVALIDO, HttpStatus.BAD_REQUEST);
         RespuestasOrganigramaHash.put(RespuestasAccessToken.TOKENNOENCONTRADO, HttpStatus.NOT_FOUND);
+        RespuestasOrganigramaHash.put(RespuestasAccessToken.TOKENDESACTIVADO, HttpStatus.BAD_REQUEST);
+
         RespuestasOrganigramaHash.put(RespuestaDepartamentos.DEPARTAMENTONOENCONTRADO, HttpStatus.NOT_FOUND);
         RespuestasOrganigramaHash.put(RespuestaDepartamentos.DEPARTAMENTOIDINVALIDO, HttpStatus.BAD_REQUEST);
         RespuestasOrganigramaHash.put(RespuestaDepartamentos.DEPARTAMENTODESACTIVADO, HttpStatus.BAD_REQUEST);

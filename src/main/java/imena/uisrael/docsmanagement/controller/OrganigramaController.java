@@ -1,16 +1,21 @@
 package imena.uisrael.docsmanagement.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import imena.uisrael.docsmanagement.DTO.ObjetoOrganigrama.ObjetoCrearOrganigrama;
+import imena.uisrael.docsmanagement.DTO.ObjetoOrganigrama.ObjetoStateOrganigrama;
 import imena.uisrael.docsmanagement.DTO.ObjetoOrganigrama.ObjetoUpdateOrganigrama;
 import imena.uisrael.docsmanagement.model.Organigrama;
 import imena.uisrael.docsmanagement.model.Parciales;
 import imena.uisrael.docsmanagement.services.GeneralFunctions;
 import imena.uisrael.docsmanagement.services.OrganigramaService;
+
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -34,16 +39,18 @@ public class OrganigramaController {
         return GeneralFunctions.DevolverRespuesta(respuesatmp, Organigrama.class,
                 Parciales.RespuestasOrganigramaHash);
     }
+
     @PostMapping("/state")
-    public ResponseEntity<Object> stateOrganigrama(@RequestBody ObjetoCrearOrganigrama objeto) {
-        String respuesatmp = organigramaService.saveOrganigrama(objeto);
+    public ResponseEntity<Object> stateOrganigrama(@RequestBody ObjetoStateOrganigrama objeto) {
+        String respuesatmp = organigramaService.stateOrganigrama(objeto);
         return GeneralFunctions.DevolverRespuesta(respuesatmp, Organigrama.class,
                 Parciales.RespuestasOrganigramaHash);
     }
-    @PostMapping("/list")
-    public ResponseEntity<Object> listOrganigrama(@RequestBody ObjetoCrearOrganigrama objeto) {
-        String respuesatmp = organigramaService.saveOrganigrama(objeto);
-        return GeneralFunctions.DevolverRespuesta(respuesatmp, Organigrama.class,
+
+    @GetMapping("/list")
+    public ResponseEntity<Object> listOrganigrama(@RequestBody ObjetoStateOrganigrama objeto) {
+        String respuesatmp = organigramaService.listOrganigrama(objeto);
+        return GeneralFunctions.DevolverRespuesta(respuesatmp, List.class,
                 Parciales.RespuestasOrganigramaHash);
     }
 

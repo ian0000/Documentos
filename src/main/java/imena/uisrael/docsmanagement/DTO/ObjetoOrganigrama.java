@@ -28,4 +28,11 @@ public class ObjetoOrganigrama {
         public boolean llevarorganigramas;// en caso de cambiar de nivel se true se lleva sus organigramaas o false los
                                           // reparte a su nivel
     }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ObjetoStateOrganigrama {
+        public Organigrama organigramanuevo;
+        public AccessToken accessToken;
+    }
 }

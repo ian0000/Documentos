@@ -23,6 +23,9 @@ public interface OrganigramaRepo extends JpaRepository<Organigrama, Long> {
     @Query("SELECT o FROM Organigrama o WHERE o.nivel = :nivel and o.departamento.accessToken.token = :token and o.active = true")
     List<Organigrama> findByNivel(String nivel, String token);
 
+    @Query("SELECT o FROM Organigrama o WHERE o.departamento.accessToken.token = :token and o.departamento.accessToken.active = true")
+    List<Organigrama> findByToken(String token);
+
     @Transactional
     @Modifying
     @Query("UPDATE Organigrama o SET o.nivel = :nivel WHERE o.padre.organigramaID = :organigramaID")

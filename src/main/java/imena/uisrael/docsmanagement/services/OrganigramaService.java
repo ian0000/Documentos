@@ -1,8 +1,11 @@
 package imena.uisrael.docsmanagement.services;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -10,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import imena.uisrael.docsmanagement.DTO.ObjetoOrganigrama.ObjetoCrearOrganigrama;
+import imena.uisrael.docsmanagement.DTO.ObjetoOrganigrama.ObjetoStateOrganigrama;
 import imena.uisrael.docsmanagement.DTO.ObjetoOrganigrama.ObjetoUpdateOrganigrama;
 import imena.uisrael.docsmanagement.model.Departamento;
 import imena.uisrael.docsmanagement.model.Organigrama;
@@ -36,6 +40,7 @@ public class OrganigramaService {
         }
         Organigrama existeorganigrama = organigramaRepo.findByCodigoPersona(objeto.organigramanuevo.getCodigoPersona(),
                 objeto.accessToken.getToken());
+
         if (existeorganigrama == null) {
             // ver que el nivel 0 no se repita
             Organigrama organigramanuevo = new Organigrama();
@@ -83,7 +88,11 @@ public class OrganigramaService {
         }
         Organigrama existeorganigrama = organigramaRepo.findByCodigoPersona(objeto.organigramaviejo.getCodigoPersona(),
                 objeto.accessToken.getToken());
+
         if (existeorganigrama != null) {
+            if (!existeorganigrama.getDepartamento().getAccessToken().isActive()) {
+                return RespuestasAccessToken.TOKENDESACTIVADO;
+            }
             // dos verificaciones el de antiguo que no sea 0 si ya existe un 0 que ya
             // deberia existir por que si o si
             // y que el nuevo no vaya a ser 0 por que a menos de que el viejo y nuevo tengan
@@ -123,6 +132,9 @@ public class OrganigramaService {
                     // tengo que ver si hay mas con este nivel// si solo hay uno debe estar puesta
                     // la opcion de llevarorganigramas para poder cambiar de nivel caso contrario
                     // sigale nomas
+                    if (!existeorganigrama.getDepartamento().getAccessToken().isActive()) {
+                        return RespuestasAccessToken.TOKENDESACTIVADO;
+                    }
                     int cantidadmismonivel = organigramaRepo.findByNivel(existeorganigrama.getNivel(),
                             existeorganigrama.getDepartamento().getAccessToken().getToken()).size();
                     if (cantidadmismonivel == 1 && llevarorganigramas != null && !objeto.llevarorganigramas) {
@@ -165,12 +177,50 @@ public class OrganigramaService {
         }
     }
 
-    public String stateOrganigrama(ObjetoCrearOrganigrama objeto) {
-        return "";
+    public String stateOrganigrama(ObjetoStateOrganigrama objeto) {
+        var verificaciones = verificacionesState(objeto);
+        if (verificaciones != "") {
+            return verificaciones;
+        }
+        Organigrama existeorganigrama = organigramaRepo.findByCodigoPersona(objeto.organigramanuevo.getCodigoPersona(),
+                objeto.accessToken.getToken());
+        if (existeorganigrama != null) {
+            existeorganigrama.setActive(!existeorganigrama.isActive());
+            try {
+                organigramaRepo.save(existeorganigrama);
+                modificarSub(existeorganigrama, false, false);// sumar digito = mantenersub
+                return existeorganigrama.isActive() ? RespuestasOrganigrama.ORGANIGRAMAACTIVADO
+                        : RespuestasOrganigrama.ORGANIGRAMADESACTIVADO;
+            } catch (Exception e) {
+                return RespuestasOrganigrama.FALLOACTUALIZAR;
+            }
+        } else {
+            return RespuestasOrganigrama.ORGANIGRAMANOEXISTE;
+        }
     }
 
-    public String listOrganigrama(ObjetoCrearOrganigrama objeto) {
-        return "";
+    public String listOrganigrama(ObjetoStateOrganigrama objeto) {
+        var verificaciones = verificacionesState(objeto);
+        if (verificaciones != "") {
+            return verificaciones;
+        }
+        List<Organigrama> listaOrganigramas = organigramaRepo.findByToken(objeto.accessToken.getToken());
+        if (listaOrganigramas != null && listaOrganigramas.size() > 0 && !listaOrganigramas.isEmpty()) {
+
+            List<Organigrama> filteredList = listaOrganigramas.stream()
+                    .filter(x -> (objeto.organigramanuevo.getCodigoPersona() == null
+                            || x.getCodigoPersona().contains(objeto.organigramanuevo.getCodigoPersona())) &&
+                            (objeto.organigramanuevo.getNombrePersona() == null
+                                    || x.getNombrePersona().contains(objeto.organigramanuevo.getNombrePersona()))
+                            &&
+                            (objeto.organigramanuevo.getNivel() == null
+                                    || x.getNivel().contains(objeto.organigramanuevo.getNivel())))
+
+                    .collect(Collectors.toList());
+            return GeneralFunctions.ConverToString(filteredList);
+        } else {
+            return RespuestasOrganigrama.ORGANIGRAMANOEXISTE;
+        }
     }
 
     public String guardarOrganigrama(Organigrama organigramanuevo, Departamento departamentoenvio, String codsuper,
@@ -230,8 +280,10 @@ public class OrganigramaService {
 
             int nivelactual = Integer.parseInt(organigrama.getNivel());
 
-            // con + 1 funciona lo que quiero pero es el mismo nivel pero se reparte para los otros
-            // sin + 1 funciona lo otro es distinto nivel y se reparte para los del anterior nivel
+            // con + 1 funciona lo que quiero pero es el mismo nivel pero se reparte para
+            // los otros
+            // sin + 1 funciona lo otro es distinto nivel y se reparte para los del anterior
+            // nivel
             if (sumardigito) {
                 nivelactual = nivelactual + 1;
             }
@@ -324,6 +376,19 @@ public class OrganigramaService {
 
             return RespuestaDepartamentos.DEPARTAMENTOIDINVALIDO;
         }
+        if (objeto.accessToken.getToken().isEmpty() || objeto.accessToken.getToken().isBlank()) {
+            return RespuestasAccessToken.TOKENNOENCONTRADO;
+        }
+
+        return "";
+    }
+
+    public String verificacionesState(ObjetoStateOrganigrama objeto) {
+        if (objeto == null || objeto.organigramanuevo == null ||
+                objeto.accessToken == null) {
+            return RespuestasGenerales.JSONINCORRECTO;
+        }
+
         if (objeto.accessToken.getToken().isEmpty() || objeto.accessToken.getToken().isBlank()) {
             return RespuestasAccessToken.TOKENNOENCONTRADO;
         }
