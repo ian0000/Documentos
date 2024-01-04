@@ -40,8 +40,14 @@ public class Parametros {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accessTokenID")
     private AccessToken accessToken;
+
     @JsonIgnore
     @ToString.Exclude
     @OneToMany(mappedBy = "parametros", cascade = CascadeType.ALL)
     private List<VersionesParametros> versiones = new ArrayList<>();
+
+    @JsonIgnore
+    @ToString.Exclude
+    @OneToMany(mappedBy = "parametros", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Documentos> documentos;
 }

@@ -20,19 +20,20 @@ import lombok.ToString;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class VersionesParametros {
+public class VersionesDocumentos {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long versionesParametrosID;
+    private long versionesDocumentosID;
     private String nombreVersion;
     @Lob
     private String jsonCambios;
     private Date fechaCambio;
-
+    
     @JsonIgnore
     @ToString.Exclude
     @ManyToOne
-    @JoinColumn(name = "parametrosID")
-    private Parametros parametros;
+    @JoinColumn(name = "documentosID")
+    private Documentos documentos;
 
 }
