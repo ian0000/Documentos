@@ -17,8 +17,8 @@ public class GeneralFunctions {
     public static ResponseEntity<Object> convertJSON(Object objeto) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            String accessTokenJson = objectMapper.writeValueAsString(objeto);
-            return ResponseEntity.ok(accessTokenJson);
+            String json = objectMapper.writeValueAsString(objeto);
+            return ResponseEntity.ok(json);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fallo al generar json");

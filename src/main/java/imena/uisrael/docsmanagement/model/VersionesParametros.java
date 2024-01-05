@@ -4,6 +4,7 @@ import java.sql.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,8 +26,9 @@ public class VersionesParametros {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long versionesParametrosID;
     private String nombreVersion;
+    @Column(columnDefinition = "BLOB")
     @Lob
-    private String jsonCambios;
+    private byte[] jsonCambios;
     private Date fechaCambio;
 
     @JsonIgnore

@@ -1,12 +1,8 @@
 package imena.uisrael.docsmanagement.services;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.function.Predicate;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +19,8 @@ import imena.uisrael.docsmanagement.model.Parciales.RespuestasGenerales;
 import imena.uisrael.docsmanagement.model.Parciales.RespuestasOrganigrama;
 import imena.uisrael.docsmanagement.repo.DepartamentoRepo;
 import imena.uisrael.docsmanagement.repo.OrganigramaRepo;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
-@Slf4j
 public class OrganigramaService {
     @Autowired
     private OrganigramaRepo organigramaRepo;

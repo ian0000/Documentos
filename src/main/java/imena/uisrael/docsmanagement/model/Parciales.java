@@ -75,6 +75,20 @@ public class Parciales {
 
     }
 
+    public static class RespuestasParametros {
+        public static String HEADERVACIOS = "EXISTEN CAMPOS VACIOS EN EL HEADER.";
+        public static String FOOTERVACIOS = "EXISTEN CAMPOS VACIOS EN EL FOOTER.";
+        public static String GENERALPARAMS = "EXISTEN CAMPOS DE PARAMETROS VACIOS.";
+        public static String NOMBREPARAMETROVACIO = "NOMBRE PARAMETRO VACIO/INCORRECTO";
+        public static String NOMBREPARAMETROEXISTE = "NOMBRE PARAMETRO YA HA SIDO ASIGNADO";
+        public static String ERRORGUARDAR = "ERROR AL GUARDAR PARAMETROS. INTENTE NUEVAMENTE.";
+        public static String ERRORTRANSFORMARJSON = "HUBO UN ERRO EL GENERAR UN JSON DE REPSUESTA";
+    }
+
+    public static class RespuestasDocumentos {
+
+    }
+
     public static Map<String, HttpStatus> RespuestasUsuariosHash = new HashMap<>();
 
     static {
@@ -161,4 +175,23 @@ public class Parciales {
         RespuestasOrganigramaHash.put(RespuestaDepartamentos.DEPARTAMENTODESACTIVADO, HttpStatus.BAD_REQUEST);
 
     }
+
+    public static Map<String, HttpStatus> RespuestasParametrosHash = new HashMap<>();
+    static {
+        RespuestasParametrosHash.put(RespuestasParametros.HEADERVACIOS, HttpStatus.BAD_REQUEST);
+        RespuestasParametrosHash.put(RespuestasParametros.FOOTERVACIOS, HttpStatus.BAD_REQUEST);
+        RespuestasParametrosHash.put(RespuestasParametros.GENERALPARAMS, HttpStatus.BAD_REQUEST);
+        RespuestasParametrosHash.put(RespuestasParametros.NOMBREPARAMETROVACIO, HttpStatus.CONFLICT);
+        RespuestasParametrosHash.put(RespuestasParametros.NOMBREPARAMETROEXISTE, HttpStatus.CONFLICT);
+        RespuestasParametrosHash.put(RespuestasParametros.ERRORGUARDAR, HttpStatus.INTERNAL_SERVER_ERROR);
+        RespuestasParametrosHash.put(RespuestasParametros.ERRORTRANSFORMARJSON, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        RespuestasParametrosHash.put(RespuestasAccessToken.TOKENNOENCONTRADO, HttpStatus.NOT_FOUND);
+        RespuestasParametrosHash.put(RespuestasGenerales.JSONINCORRECTO, HttpStatus.BAD_REQUEST);
+    }
+    public static Map<String, HttpStatus> RespuestasDocumentosHash = new HashMap<>();
+    static {
+
+    }
+
 }

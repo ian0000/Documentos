@@ -25,19 +25,15 @@ public class AccessTokenController {
     private AccessTokenService accessTokenService;
 
     @PostMapping("/generate")
-    public ResponseEntity<Object> generarAccessToken(@RequestBody ObjetoAccessToken objeto) {
-        // User user = userService.findByEmailAndPassword(email, password);
-
+    public ResponseEntity<Object> createAccessToken(@RequestBody ObjetoAccessToken objeto) {
         String respuestmp = accessTokenService.saveAccessToken(objeto);
         return GeneralFunctions.DevolverRespuesta(respuestmp, AccessToken.class, Parciales.RespuestasAccessTokenHash);
-
     }
 
     @PostMapping("/changestate")
     public ResponseEntity<Object> changeState(@RequestBody ObjetoAccessToken objeto) {
         String respuestmp = accessTokenService.saveAccessToken(objeto);
         return GeneralFunctions.DevolverRespuesta(respuestmp, AccessToken.class, Parciales.RespuestasAccessTokenHash);
-
     }
 
     @PostMapping("/update")
