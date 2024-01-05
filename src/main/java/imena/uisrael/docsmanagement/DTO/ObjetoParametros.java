@@ -45,12 +45,10 @@ public class ObjetoParametros {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ParametrosJson {
+        public String nombreParametro;
         public ParamHeader header;
         public ParamFooter footer;
         public ParamGenerics generics;
     }
 
-    public class ParametrosActualizar {
-
-    }
 }

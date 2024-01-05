@@ -76,6 +76,7 @@ public class Parciales {
     }
 
     public static class RespuestasParametros {
+        public static String PARAMETRONOEXISTE = "NOMBRE PARAMETRO NO ENCONTRADO";
         public static String HEADERVACIOS = "EXISTEN CAMPOS VACIOS EN EL HEADER.";
         public static String FOOTERVACIOS = "EXISTEN CAMPOS VACIOS EN EL FOOTER.";
         public static String GENERALPARAMS = "EXISTEN CAMPOS DE PARAMETROS VACIOS.";
@@ -83,6 +84,10 @@ public class Parciales {
         public static String NOMBREPARAMETROEXISTE = "NOMBRE PARAMETRO YA HA SIDO ASIGNADO";
         public static String ERRORGUARDAR = "ERROR AL GUARDAR PARAMETROS. INTENTE NUEVAMENTE.";
         public static String ERRORTRANSFORMARJSON = "HUBO UN ERRO EL GENERAR UN JSON DE REPSUESTA";
+        public static String PARAMETROACTIVADO = "PARAMETRO ACTIVADO";
+        public static String PARAMETRODESACTIVADO = "PARAMETRO DESACTIVADO";
+        public static String SINREGISTROSTOKEN = "NO EXISTEN REGISTROS CON EL TOKEN.";
+
     }
 
     public static class RespuestasDocumentos {
@@ -178,6 +183,7 @@ public class Parciales {
 
     public static Map<String, HttpStatus> RespuestasParametrosHash = new HashMap<>();
     static {
+        RespuestasParametrosHash.put(RespuestasParametros.PARAMETRONOEXISTE, HttpStatus.BAD_REQUEST);
         RespuestasParametrosHash.put(RespuestasParametros.HEADERVACIOS, HttpStatus.BAD_REQUEST);
         RespuestasParametrosHash.put(RespuestasParametros.FOOTERVACIOS, HttpStatus.BAD_REQUEST);
         RespuestasParametrosHash.put(RespuestasParametros.GENERALPARAMS, HttpStatus.BAD_REQUEST);
@@ -185,6 +191,9 @@ public class Parciales {
         RespuestasParametrosHash.put(RespuestasParametros.NOMBREPARAMETROEXISTE, HttpStatus.CONFLICT);
         RespuestasParametrosHash.put(RespuestasParametros.ERRORGUARDAR, HttpStatus.INTERNAL_SERVER_ERROR);
         RespuestasParametrosHash.put(RespuestasParametros.ERRORTRANSFORMARJSON, HttpStatus.INTERNAL_SERVER_ERROR);
+        RespuestasParametrosHash.put(RespuestasParametros.PARAMETROACTIVADO, HttpStatus.NOT_FOUND);
+        RespuestasParametrosHash.put(RespuestasParametros.PARAMETRODESACTIVADO, HttpStatus.OK);
+        RespuestasParametrosHash.put(RespuestasParametros.SINREGISTROSTOKEN, HttpStatus.OK);
 
         RespuestasParametrosHash.put(RespuestasAccessToken.TOKENNOENCONTRADO, HttpStatus.NOT_FOUND);
         RespuestasParametrosHash.put(RespuestasGenerales.JSONINCORRECTO, HttpStatus.BAD_REQUEST);

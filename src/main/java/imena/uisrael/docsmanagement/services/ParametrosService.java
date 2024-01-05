@@ -1,8 +1,11 @@
 package imena.uisrael.docsmanagement.services;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
+import org.json.JSONObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,8 +13,9 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import imena.uisrael.docsmanagement.DTO.ObjetoParametros;
-import imena.uisrael.docsmanagement.DTO.ObjetoParametros.ParametrosActualizar;
+import imena.uisrael.docsmanagement.DTO.ObjetoParametros.ParamFooter;
+import imena.uisrael.docsmanagement.DTO.ObjetoParametros.ParamGenerics;
+import imena.uisrael.docsmanagement.DTO.ObjetoParametros.ParamHeader;
 import imena.uisrael.docsmanagement.DTO.ObjetoParametros.ParametrosCrear;
 import imena.uisrael.docsmanagement.DTO.ObjetoParametros.ParametrosJson;
 import imena.uisrael.docsmanagement.model.AccessToken;
@@ -21,8 +25,10 @@ import imena.uisrael.docsmanagement.model.Parciales.RespuestasGenerales;
 import imena.uisrael.docsmanagement.model.Parciales.RespuestasParametros;
 import imena.uisrael.docsmanagement.repo.AccessTokenRepo;
 import imena.uisrael.docsmanagement.repo.ParametrosRepo;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class ParametrosService {
 
     @Autowired
@@ -74,7 +80,7 @@ public class ParametrosService {
     }
 
     public String updateParametro(ParametrosCrear objeto) {
-        String verificacion = verificarParametrosGenerales(objeto);
+        String verificacion = verificarParametrosGenerales(objeto, true);
         if (!verificacion.isEmpty()) {
             return verificacion;
         }
@@ -83,19 +89,87 @@ public class ParametrosService {
         if (existeparametro != null) {
             return verificarValoresUpdate(objeto, existeparametro);
         }
-        return RespuestasParametros.ERRORGUARDAR;
+        return RespuestasParametros.PARAMETRONOEXISTE;
     }
 
-    public String stateParametro(ParametrosActualizar objeto) {
-        return "";
+    public String stateParametro(ParametrosCrear objeto) {
+        String verificacion = verificarParametrosGenerales(objeto, false);
+        if (!verificacion.isEmpty()) {
+            return verificacion;
+        }
+        Parametros existeparametro = parametrosRepo.findByNombreParametro(objeto.parametros.getNombreParametro(),
+                objeto.accessToken.getToken());
+        if (existeparametro != null) {
+            try {
+                Parametros res = new Parametros();
+                existeparametro.setActive(!existeparametro.isActive());
+                existeparametro.setUltimaModificacion(new Date());
+                res = parametrosRepo.save(existeparametro);
+                return existeparametro.isActive() ? RespuestasParametros.PARAMETROACTIVADO
+                        : RespuestasParametros.PARAMETRODESACTIVADO;
+            } catch (Exception e) {
+                return RespuestasParametros.ERRORGUARDAR;
+            }
+        }
+        return RespuestasParametros.PARAMETRONOEXISTE;
     }
 
-    public String listParametro(ObjetoParametros objeto) {
-        return "";
+    public String listParametro(ParametrosCrear objeto) {
+        String verificacion = verificarParametrosGenerales(objeto, false);
+        if (!verificacion.isEmpty()) {
+            return verificacion;
+        }
+        List<Parametros> parametros = parametrosRepo.findByToken(
+                objeto.accessToken.getToken());
+        if (parametros != null) {
+            List<ParametrosJson> res = new ArrayList<ParametrosJson>();
+            for (Parametros param : parametros) {
+                byte[] blob = param.getJsonParametros();
+                String jsonString = new String(blob, StandardCharsets.UTF_8);
+
+                // Parse the JSON string manually
+                JSONObject jsonObject = new JSONObject(jsonString);
+
+                JSONObject headerJson = jsonObject.getJSONObject("header");
+                JSONObject footerJson = jsonObject.getJSONObject("footer");
+                JSONObject genericsJson = jsonObject.getJSONObject("generics");
+
+                String titulo = headerJson.getString("titulo");
+                String subtitulo = headerJson.getString("subtitulo");
+                String nombreorganizacion = headerJson.getString("nombreorganizacion");
+                String logo = headerJson.getString("logo");
+                String ladologo = headerJson.getString("ladologo");
+                String fecha = headerJson.getString("fecha");
+
+                String notapiepagina = footerJson.getString("notapiepagina");
+                String informacioncontacto = footerJson.getString("informacioncontacto");
+                String firma = footerJson.getString("firma");
+
+                String font = genericsJson.getString("font");
+                int fontSize = genericsJson.getInt("fontSize");
+                String fontColor = genericsJson.getString("fontColor");
+
+                ParamHeader h = new ParamHeader(titulo, subtitulo, nombreorganizacion, logo, ladologo, fecha);
+                ParamFooter f = new ParamFooter(notapiepagina, informacioncontacto, firma);
+                ParamGenerics g = new ParamGenerics(font, fontSize, fontColor);
+
+                ParametrosJson parametrosJson = new ParametrosJson();
+                parametrosJson.header = h;
+                parametrosJson.footer = f;
+                parametrosJson.generics = g;
+                parametrosJson.nombreParametro = param.getNombreParametro();
+                res.add(parametrosJson);
+
+            }
+
+            return GeneralFunctions.ConverToString(res);
+        }
+
+        return RespuestasParametros.SINREGISTROSTOKEN;
     }
 
     public String verificarParametrosCrear(ParametrosCrear objeto) {
-        String verificar = verificarParametrosCrear(objeto);
+        String verificar = verificarParametrosGenerales(objeto, true);
         if (!verificar.isBlank()) {
             return verificar;
         }
@@ -119,9 +193,13 @@ public class ParametrosService {
         return "";
     }
 
-    public String verificarParametrosGenerales(ParametrosCrear objeto) {
-        if (objeto == null || objeto.accessToken == null || objeto.parametros == null
-                || objeto.header == null || objeto.footer == null || objeto.generics == null) {
+    public String verificarParametrosGenerales(ParametrosCrear objeto, boolean verjson) {
+        if (objeto == null || objeto.accessToken == null) {
+            return RespuestasGenerales.JSONINCORRECTO;
+        }
+        if (verjson && (objeto.parametros == null
+                || objeto.header == null || objeto.footer == null || objeto.generics == null)) {
+
             return RespuestasGenerales.JSONINCORRECTO;
         }
         if (objeto.accessToken.getToken() == null || objeto.accessToken.getToken().isEmpty()
@@ -155,11 +233,11 @@ public class ParametrosService {
                     oldMap.put(key, value);
                 }
             }
-
+            // TODO: haver el guardado de la version aqui
             System.out.println("Merged JSON: " + mapper.writeValueAsString(oldMap));
 
             parametrosantiguo.setNombreParametro(objeto.parametros.getNombreParametro());
-            parametrosantiguo.setJsonParametros(jsonantiguo.getBytes(StandardCharsets.UTF_8));
+            parametrosantiguo.setJsonParametros(mapper.writeValueAsString(oldMap).getBytes(StandardCharsets.UTF_8));
             parametrosantiguo.setUltimaModificacion(new Date());
 
             try {

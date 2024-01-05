@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import imena.uisrael.docsmanagement.DTO.ObjetoParametros;
-import imena.uisrael.docsmanagement.DTO.ObjetoParametros.ParametrosActualizar;
 import imena.uisrael.docsmanagement.DTO.ObjetoParametros.ParametrosCrear;
 import imena.uisrael.docsmanagement.model.Parametros;
 import imena.uisrael.docsmanagement.model.Parciales;
@@ -31,7 +29,7 @@ public class ParametrosController {
     }
 
     @PostMapping("/state")
-    public ResponseEntity<Object> changeStateParametros(@RequestBody ParametrosActualizar objeto) {
+    public ResponseEntity<Object> changeStateParametros(@RequestBody ParametrosCrear objeto) {
         String respuestmp = parametrosService.stateParametro(objeto);
         return GeneralFunctions.DevolverRespuesta(respuestmp, Parametros.class, Parciales.RespuestasParametrosHash);
     }
@@ -43,7 +41,7 @@ public class ParametrosController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<Object> getParametrosList(@RequestBody ObjetoParametros objeto) {
+    public ResponseEntity<Object> getParametrosList(@RequestBody ParametrosCrear objeto) {
         String respuestmp = parametrosService.listParametro(objeto);
         return GeneralFunctions.DevolverRespuesta(respuestmp, List.class, Parciales.RespuestasParametrosHash);
     }

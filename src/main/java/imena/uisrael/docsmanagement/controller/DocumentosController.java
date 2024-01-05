@@ -2,12 +2,9 @@ package imena.uisrael.docsmanagement.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import imena.uisrael.docsmanagement.DTO.ObjetoAccessToken;
 import imena.uisrael.docsmanagement.DTO.ObjetoDocumentos;
-import imena.uisrael.docsmanagement.model.AccessToken;
 import imena.uisrael.docsmanagement.model.Documentos;
 import imena.uisrael.docsmanagement.model.Parciales;
-import imena.uisrael.docsmanagement.services.AccessTokenService;
 import imena.uisrael.docsmanagement.services.DocumentosService;
 import imena.uisrael.docsmanagement.services.GeneralFunctions;
 
