@@ -25,10 +25,8 @@ import imena.uisrael.docsmanagement.model.Parciales.RespuestasGenerales;
 import imena.uisrael.docsmanagement.model.Parciales.RespuestasParametros;
 import imena.uisrael.docsmanagement.repo.AccessTokenRepo;
 import imena.uisrael.docsmanagement.repo.ParametrosRepo;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
-@Slf4j
 public class ParametrosService {
 
     @Autowired
@@ -101,10 +99,9 @@ public class ParametrosService {
                 objeto.accessToken.getToken());
         if (existeparametro != null) {
             try {
-                Parametros res = new Parametros();
                 existeparametro.setActive(!existeparametro.isActive());
                 existeparametro.setUltimaModificacion(new Date());
-                res = parametrosRepo.save(existeparametro);
+                parametrosRepo.save(existeparametro);
                 return existeparametro.isActive() ? RespuestasParametros.PARAMETROACTIVADO
                         : RespuestasParametros.PARAMETRODESACTIVADO;
             } catch (Exception e) {
@@ -234,7 +231,6 @@ public class ParametrosService {
                 }
             }
             // TODO: haver el guardado de la version aqui
-            System.out.println("Merged JSON: " + mapper.writeValueAsString(oldMap));
 
             parametrosantiguo.setNombreParametro(objeto.parametros.getNombreParametro());
             parametrosantiguo.setJsonParametros(mapper.writeValueAsString(oldMap).getBytes(StandardCharsets.UTF_8));

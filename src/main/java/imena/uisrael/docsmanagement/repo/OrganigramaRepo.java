@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 
 public interface OrganigramaRepo extends JpaRepository<Organigrama, Long> {
 
+    //TODO: todos estos deberian estar separados por departamento tambien para que puedan ser repetidos en la misma organizacion
     @Query("SELECT o FROM Organigrama o WHERE o.codigoPersona = :codigoPersona and o.departamento.accessToken.token = :token")
     Organigrama findByCodigoPersona(String codigoPersona, String token);
 

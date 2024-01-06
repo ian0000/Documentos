@@ -18,16 +18,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
-@RequestMapping("api/documentos")
+@RequestMapping("/api/documentos")
 public class DocumentosController {
+
+    //TODO: EN GUARDADO DE VERSIONES SE DEBE ALMACENAR CMO PDF Y AL CREAR COMO WORD 
+    //ESTOS NO SE DEBEN PODER CAMBIAR
+    
 
     @Autowired
     private DocumentosService documentosService;
 
     @PostMapping("/create")
-    public ResponseEntity<Object> createDocumento(@RequestBody ObjetoDocumentos objeto) {
-        String respuestmp = documentosService.saveDocumentos(objeto);
-        return GeneralFunctions.DevolverRespuesta(respuestmp, Documentos.class, Parciales.RespuestasAccessTokenHash);
+    public String createDocumento(@RequestBody ObjetoDocumentos objeto) {
+        String respuestmp = documentosService.saveDocumentos();
+        return "";
     }
 
     @PostMapping("/state")

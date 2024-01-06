@@ -6,9 +6,10 @@ import imena.uisrael.docsmanagement.model.Organigrama;
 import imena.uisrael.docsmanagement.model.Parametros;
 
 public class ObjetoDocumentos {
-    public Documentos documentos;
-    public Parametros parametros;
-    public AccessToken accessToken;
-    public Organigrama organigramaSender;
-    public Organigrama organigramaReceiver;
+    public String texto;
+    // public Documentos documentos;
+    // public Parametros parametros;
+    // public AccessToken accessToken;
+    // public Organigrama organigramaSender;
+    // public Organigrama organigramaReceiver;
 }
