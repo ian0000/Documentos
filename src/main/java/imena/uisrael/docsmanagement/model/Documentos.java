@@ -36,6 +36,8 @@ public class Documentos {
     private byte[] base64;
     private Date fechaUltimaModificaicon;
     private String jsonDatosDocumento;
+    private boolean generadoAutomatico;
+    private boolean subidoPlantilla;
 
     // aqui deberia tener dos de para quien es y de quien es
     @JsonIgnore
