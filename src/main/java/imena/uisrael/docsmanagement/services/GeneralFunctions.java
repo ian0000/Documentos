@@ -1,8 +1,10 @@
 package imena.uisrael.docsmanagement.services;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -10,6 +12,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import imena.uisrael.docsmanagement.DTO.ObjetoParametros.ParamFooter;
+import imena.uisrael.docsmanagement.DTO.ObjetoParametros.ParamGenerics;
+import imena.uisrael.docsmanagement.DTO.ObjetoParametros.ParamHeader;
+import imena.uisrael.docsmanagement.DTO.ObjetoParametros.ParametrosJson;
+import imena.uisrael.docsmanagement.model.Parametros;
 import imena.uisrael.docsmanagement.model.Parciales.RespuestasUsuarios;
 
 public class GeneralFunctions {
@@ -78,5 +85,43 @@ public class GeneralFunctions {
             return RespuestasUsuarios.PASWORDLARGO;
         }
         return "";
+    }
+
+    public static ParametrosJson converParamToJSON(Parametros param) {
+        byte[] blob = param.getJsonParametros();
+        String jsonString = new String(blob, StandardCharsets.UTF_8);
+
+        // Parse the JSON string manually
+        JSONObject jsonObject = new JSONObject(jsonString);
+
+        JSONObject headerJson = jsonObject.getJSONObject("header");
+        JSONObject footerJson = jsonObject.getJSONObject("footer");
+        JSONObject genericsJson = jsonObject.getJSONObject("generics");
+
+        String titulo = headerJson.getString("titulo");
+        String subtitulo = headerJson.getString("subtitulo");
+        String nombreorganizacion = headerJson.getString("nombreorganizacion");
+        String logo = headerJson.getString("logo");
+        String ladologo = headerJson.getString("ladologo");
+        String fecha = headerJson.getString("fecha");
+
+        String notapiepagina = footerJson.getString("notapiepagina");
+        String informacioncontacto = footerJson.getString("informacioncontacto");
+        String firma = footerJson.getString("firma");
+
+        String font = genericsJson.getString("font");
+        int fontSize = genericsJson.getInt("fontSize");
+        String fontColor = genericsJson.getString("fontColor");
+
+        ParamHeader h = new ParamHeader(titulo, subtitulo, nombreorganizacion, logo, ladologo, fecha);
+        ParamFooter f = new ParamFooter(notapiepagina, informacioncontacto, firma);
+        ParamGenerics g = new ParamGenerics(font, fontSize, fontColor);
+
+        ParametrosJson parametrosJson = new ParametrosJson();
+        parametrosJson.header = h;
+        parametrosJson.footer = f;
+        parametrosJson.generics = g;
+        parametrosJson.nombreParametro = param.getNombreParametro();
+        return parametrosJson;
     }
 }
