@@ -33,7 +33,7 @@ public class OrganigramaService {
             return verificaciones;
         }
         Organigrama existeorganigrama = organigramaRepo.findByCodigoPersona(objeto.organigramanuevo.getCodigoPersona(),
-                objeto.accessToken.getToken());
+                objeto.accessToken.getToken(), objeto.departamento.getNombreDepartamento());
 
         if (existeorganigrama == null) {
             // ver que el nivel 0 no se repita
@@ -45,7 +45,9 @@ public class OrganigramaService {
             if ((organigramanuevo.getNivel() != null && organigramanuevo.getNivel().equals("0")) && codSuper == null) {
                 // se busca si ya no existen niveles 0
 
-                var tmp = organigramaRepo.findByNivel(organigramanuevo.getNivel(), objeto.accessToken.getToken())
+                var tmp = organigramaRepo
+                        .findByNivel(organigramanuevo.getNivel(), objeto.accessToken.getToken(),
+                                objeto.departamento.getNombreDepartamento())
                         .toArray();
                 if (tmp.length != 0) {
                     return RespuestasOrganigrama.FALLONIVEL0;
@@ -81,7 +83,7 @@ public class OrganigramaService {
             return verificaciones;
         }
         Organigrama existeorganigrama = organigramaRepo.findByCodigoPersona(objeto.organigramaviejo.getCodigoPersona(),
-                objeto.accessToken.getToken());
+                objeto.accessToken.getToken(), objeto.departamento.getNombreDepartamento());
 
         if (existeorganigrama != null) {
             if (!existeorganigrama.getDepartamento().getAccessToken().isActive()) {
@@ -130,7 +132,8 @@ public class OrganigramaService {
                         return RespuestasAccessToken.TOKENDESACTIVADO;
                     }
                     int cantidadmismonivel = organigramaRepo.findByNivel(existeorganigrama.getNivel(),
-                            existeorganigrama.getDepartamento().getAccessToken().getToken()).size();
+                            existeorganigrama.getDepartamento().getAccessToken().getToken(),
+                            objeto.departamento.getNombreDepartamento()).size();
                     if (cantidadmismonivel == 1 && llevarorganigramas != null && !objeto.llevarorganigramas) {
                         return RespuestasOrganigrama.EXISTEUSUARIOSNIVELX;
                     } else {
@@ -177,7 +180,7 @@ public class OrganigramaService {
             return verificaciones;
         }
         Organigrama existeorganigrama = organigramaRepo.findByCodigoPersona(objeto.organigramanuevo.getCodigoPersona(),
-                objeto.accessToken.getToken());
+                objeto.accessToken.getToken(), objeto.departamento.getNombreDepartamento());
         if (existeorganigrama != null) {
             existeorganigrama.setActive(!existeorganigrama.isActive());
             try {
@@ -198,7 +201,8 @@ public class OrganigramaService {
         if (verificaciones != "") {
             return verificaciones;
         }
-        List<Organigrama> listaOrganigramas = organigramaRepo.findByToken(objeto.accessToken.getToken());
+        List<Organigrama> listaOrganigramas = organigramaRepo.findByToken(objeto.accessToken.getToken(),
+                objeto.departamento.getNombreDepartamento());
         if (listaOrganigramas != null && listaOrganigramas.size() > 0 && !listaOrganigramas.isEmpty()) {
 
             List<Organigrama> filteredList = listaOrganigramas.stream()
@@ -227,7 +231,7 @@ public class OrganigramaService {
             if (codsuper != null) {
 
                 Organigrama organigramasuper = organigramaRepo.findByCodigoPersona(codsuper,
-                        departamento.getAccessToken().getToken());
+                        departamento.getAccessToken().getToken(), departamento.getNombreDepartamento());
                 if (organigramasuper != null) {
                     int nivelactual = Integer.parseInt(organigramasuper.getNivel()) + 1;
                     organigramanuevo.setNivel(String.valueOf(nivelactual));
@@ -283,7 +287,8 @@ public class OrganigramaService {
             }
 
             List<Organigrama> organigramasmismonivel = organigramaRepo.findByNivel(String.valueOf(nivelactual),
-                    organigrama.getDepartamento().getAccessToken().getToken());
+                    organigrama.getDepartamento().getAccessToken().getToken(),
+                    organigrama.getDepartamento().getNombreDepartamento());
 
             List<Organigrama> organigramassubs = organigramaRepo.findByIDSuper(organigrama.getOrganigramaID(),
                     organigrama.getDepartamento().getAccessToken().getToken());
@@ -323,7 +328,8 @@ public class OrganigramaService {
         for (Organigrama organigrama : listasupers) {
             long orgid = organigrama.getOrganigramaID();
             resultMap.put(orgid, organigramaRepo.findContByIDSuper(orgid,
-                    organigrama.getDepartamento().getAccessToken().getToken()));
+                    organigrama.getDepartamento().getAccessToken().getToken(),
+                    organigrama.getDepartamento().getNombreDepartamento()));
         }
         for (Organigrama supervisor : listasupers) {
             int valoractual = resultMap.get(supervisor.getOrganigramaID());

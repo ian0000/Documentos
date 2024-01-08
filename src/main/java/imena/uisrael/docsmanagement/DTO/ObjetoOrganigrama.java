@@ -34,5 +34,6 @@ public class ObjetoOrganigrama {
     public static class ObjetoStateOrganigrama {
         public Organigrama organigramanuevo;
         public AccessToken accessToken;
+        public Departamento departamento;
     }
 }
