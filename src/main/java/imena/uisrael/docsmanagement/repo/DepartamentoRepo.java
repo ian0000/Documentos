@@ -9,4 +9,7 @@ public interface DepartamentoRepo extends JpaRepository<Departamento, Long> {
 
     @Query("SELECT d FROM Departamento d WHERE d.nombreDepartamento = :nombre and d.accessToken.token = :token")
     Departamento findByNombre(String nombre, String token);
+
+    @Query("SELECT d FROM Departamento d WHERE d.departamentoID = :departamentoID and d.accessToken.token = :token")
+    Departamento findByIdAccesstoken(Long departamentoID, String token);
 }

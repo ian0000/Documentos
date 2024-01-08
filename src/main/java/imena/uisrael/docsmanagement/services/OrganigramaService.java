@@ -33,7 +33,7 @@ public class OrganigramaService {
             return verificaciones;
         }
         Organigrama existeorganigrama = organigramaRepo.findByCodigoPersona(objeto.organigramanuevo.getCodigoPersona(),
-                objeto.accessToken.getToken(), objeto.departamento.getNombreDepartamento());
+                objeto.accessToken.getToken(), objeto.departamento.getDepartamentoID());
 
         if (existeorganigrama == null) {
             // ver que el nivel 0 no se repita
@@ -47,21 +47,23 @@ public class OrganigramaService {
 
                 var tmp = organigramaRepo
                         .findByNivel(organigramanuevo.getNivel(), objeto.accessToken.getToken(),
-                                objeto.departamento.getNombreDepartamento())
+                                objeto.departamento.getDepartamentoID())
                         .toArray();
                 if (tmp.length != 0) {
                     return RespuestasOrganigrama.FALLONIVEL0;
                 }
-                return guardarOrganigrama(organigramanuevo, objeto.departamento, null, false, false);
+                return guardarOrganigrama(organigramanuevo, objeto.departamento, null, false, false,
+                        objeto.accessToken.getToken());
             } else if ((organigramanuevo.getNivel() != null && organigramanuevo.getNivel().equals("0"))
                     && codSuper != null) {
                 return RespuestasOrganigrama.FALLOPADRE0;
             } else if ((organigramanuevo.getNivel() != null && !organigramanuevo.getNivel().equals("0"))
                     && codSuper == null) {
                 return RespuestasOrganigrama.FALLOPADRE;
-            } else if ((organigramanuevo.getNivel() == null || organigramanuevo.getNivel().equals("0"))
+            } else if ((organigramanuevo.getNivel() == null || !organigramanuevo.getNivel().equals("0"))
                     && codSuper != null) {
-                return guardarOrganigrama(organigramanuevo, objeto.departamento, codSuper, false, false);
+                return guardarOrganigrama(organigramanuevo, objeto.departamento, codSuper, false, false,
+                        objeto.accessToken.getToken());
             } else {
                 return RespuestasOrganigrama.FALLOGUARDAR;
             }
@@ -83,7 +85,7 @@ public class OrganigramaService {
             return verificaciones;
         }
         Organigrama existeorganigrama = organigramaRepo.findByCodigoPersona(objeto.organigramaviejo.getCodigoPersona(),
-                objeto.accessToken.getToken(), objeto.departamento.getNombreDepartamento());
+                objeto.accessToken.getToken(), objeto.departamento.getDepartamentoID());
 
         if (existeorganigrama != null) {
             if (!existeorganigrama.getDepartamento().getAccessToken().isActive()) {
@@ -133,7 +135,7 @@ public class OrganigramaService {
                     }
                     int cantidadmismonivel = organigramaRepo.findByNivel(existeorganigrama.getNivel(),
                             existeorganigrama.getDepartamento().getAccessToken().getToken(),
-                            objeto.departamento.getNombreDepartamento()).size();
+                            objeto.departamento.getDepartamentoID()).size();
                     if (cantidadmismonivel == 1 && llevarorganigramas != null && !objeto.llevarorganigramas) {
                         return RespuestasOrganigrama.EXISTEUSUARIOSNIVELX;
                     } else {
@@ -148,7 +150,7 @@ public class OrganigramaService {
             String codSuper = objeto.codSuper;
             if (existeorganigrama.getNivel().equals("0") && codSuper == null) {
                 return guardarOrganigrama(existeorganigrama, existeorganigrama.getDepartamento(), codSuper,
-                        false, modificarsub);
+                        false, modificarsub, existeorganigrama.getDepartamento().getAccessToken().getToken());
             } else if (existeorganigrama.getNivel().equals("0") && codSuper != null) {
                 return RespuestasOrganigrama.FALLOPADRE0;
             } else if (!existeorganigrama.getNivel().equals("0") && codSuper == null) {
@@ -159,10 +161,11 @@ public class OrganigramaService {
                 // que si selleve todos
                 if (llevarorganigramas != null) {
                     return guardarOrganigrama(existeorganigrama, existeorganigrama.getDepartamento(), codSuper,
-                            objeto.llevarorganigramas, modificarsub);
+                            objeto.llevarorganigramas, modificarsub,
+                            existeorganigrama.getDepartamento().getAccessToken().getToken());
                 } else {
                     return guardarOrganigrama(existeorganigrama, existeorganigrama.getDepartamento(), codSuper,
-                            false, modificarsub);
+                            false, modificarsub, existeorganigrama.getDepartamento().getAccessToken().getToken());
                 }
                 // aqui ya viene encriptado
             } else {
@@ -180,7 +183,7 @@ public class OrganigramaService {
             return verificaciones;
         }
         Organigrama existeorganigrama = organigramaRepo.findByCodigoPersona(objeto.organigramanuevo.getCodigoPersona(),
-                objeto.accessToken.getToken(), objeto.departamento.getNombreDepartamento());
+                objeto.accessToken.getToken(), objeto.departamento.getDepartamentoID());
         if (existeorganigrama != null) {
             existeorganigrama.setActive(!existeorganigrama.isActive());
             try {
@@ -202,7 +205,7 @@ public class OrganigramaService {
             return verificaciones;
         }
         List<Organigrama> listaOrganigramas = organigramaRepo.findByToken(objeto.accessToken.getToken(),
-                objeto.departamento.getNombreDepartamento());
+                objeto.departamento.getDepartamentoID());
         if (listaOrganigramas != null && listaOrganigramas.size() > 0 && !listaOrganigramas.isEmpty()) {
 
             List<Organigrama> filteredList = listaOrganigramas.stream()
@@ -222,22 +225,27 @@ public class OrganigramaService {
     }
 
     public String guardarOrganigrama(Organigrama organigramanuevo, Departamento departamentoenvio, String codsuper,
-            boolean llevarorganigramas, boolean modificarsub) {
+            boolean llevarorganigramas, boolean modificarsub, String token) {
 
         String numerotmp = organigramanuevo.getNivel();
-        Departamento departamento = departamentoRepo.findById(departamentoenvio.getDepartamentoID()).get();
+        Departamento departamento = departamentoRepo.findByIdAccesstoken(departamentoenvio.getDepartamentoID(), token);
         if (departamento != null && departamento.isActive()) {
             organigramanuevo.setDepartamento(departamento);
             if (codsuper != null) {
 
                 Organigrama organigramasuper = organigramaRepo.findByCodigoPersona(codsuper,
-                        departamento.getAccessToken().getToken(), departamento.getNombreDepartamento());
-                if (organigramasuper != null) {
+                        departamento.getAccessToken().getToken(), departamento.getDepartamentoID());
+                if (organigramasuper != null && organigramasuper.isActive()) {
                     int nivelactual = Integer.parseInt(organigramasuper.getNivel()) + 1;
                     organigramanuevo.setNivel(String.valueOf(nivelactual));
                     organigramanuevo.setPadre(organigramasuper);
                 } else {
-                    return RespuestasOrganigrama.FALLOFALTAPADRE;
+                    if (organigramasuper == null) {
+
+                        return RespuestasOrganigrama.FALLOFALTAPADRE;
+                    } else {
+                        return RespuestasOrganigrama.ORGANIGRAMADESACTIVADO;
+                    }
                 }
             }
             try { // hasta aqui se guardo
@@ -288,7 +296,7 @@ public class OrganigramaService {
 
             List<Organigrama> organigramasmismonivel = organigramaRepo.findByNivel(String.valueOf(nivelactual),
                     organigrama.getDepartamento().getAccessToken().getToken(),
-                    organigrama.getDepartamento().getNombreDepartamento());
+                    organigrama.getDepartamento().getDepartamentoID()).stream().filter(x -> x.isActive()).toList();
 
             List<Organigrama> organigramassubs = organigramaRepo.findByIDSuper(organigrama.getOrganigramaID(),
                     organigrama.getDepartamento().getAccessToken().getToken());
@@ -329,7 +337,7 @@ public class OrganigramaService {
             long orgid = organigrama.getOrganigramaID();
             resultMap.put(orgid, organigramaRepo.findContByIDSuper(orgid,
                     organigrama.getDepartamento().getAccessToken().getToken(),
-                    organigrama.getDepartamento().getNombreDepartamento()));
+                    organigrama.getDepartamento().getDepartamentoID()));
         }
         for (Organigrama supervisor : listasupers) {
             int valoractual = resultMap.get(supervisor.getOrganigramaID());
