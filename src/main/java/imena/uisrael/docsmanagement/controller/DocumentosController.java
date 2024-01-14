@@ -30,7 +30,7 @@ public class DocumentosController {
 
     @PostMapping("/create")
     public String createDocumento(@RequestBody ObjetoDocumentos objeto) {
-        String respuestmp = documentosService.saveDocumentos();
+        String respuestmp = documentosService.testDoc();
         return "";
     }
 

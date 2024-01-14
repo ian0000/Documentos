@@ -33,7 +33,7 @@ public class Parametros {
     private String nombreParametro;
     @Column(columnDefinition = "BLOB")
     @Lob
-    private byte[] jsonParametros;
+    private byte[] json;// aqui van a ir los template, los parametros generales, los campos placeholder, y los parametros de cada ca
     private Date ultimaModificacion;
     private boolean isActive;
 

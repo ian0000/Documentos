@@ -77,8 +77,6 @@ public class Parciales {
 
     public static class RespuestasParametros {
         public static String PARAMETRONOEXISTE = "NOMBRE PARAMETRO NO ENCONTRADO";
-        public static String HEADERVACIOS = "EXISTEN CAMPOS VACIOS EN EL HEADER.";
-        public static String FOOTERVACIOS = "EXISTEN CAMPOS VACIOS EN EL FOOTER.";
         public static String GENERALPARAMS = "EXISTEN CAMPOS DE PARAMETROS VACIOS.";
         public static String NOMBREPARAMETROVACIO = "NOMBRE PARAMETRO VACIO/INCORRECTO";
         public static String NOMBREPARAMETROEXISTE = "NOMBRE PARAMETRO YA HA SIDO ASIGNADO";
@@ -87,7 +85,7 @@ public class Parciales {
         public static String PARAMETROACTIVADO = "PARAMETRO ACTIVADO";
         public static String PARAMETRODESACTIVADO = "PARAMETRO DESACTIVADO";
         public static String SINREGISTROSTOKEN = "NO EXISTEN REGISTROS CON EL TOKEN.";
-
+        public static String DOCUMENTOINCORRECTO = "DOCUMENTO INCORRECTO O VACIO.";
     }
 
     public static class RespuestasDocumentos {
@@ -184,8 +182,7 @@ public class Parciales {
     public static Map<String, HttpStatus> RespuestasParametrosHash = new HashMap<>();
     static {
         RespuestasParametrosHash.put(RespuestasParametros.PARAMETRONOEXISTE, HttpStatus.BAD_REQUEST);
-        RespuestasParametrosHash.put(RespuestasParametros.HEADERVACIOS, HttpStatus.BAD_REQUEST);
-        RespuestasParametrosHash.put(RespuestasParametros.FOOTERVACIOS, HttpStatus.BAD_REQUEST);
+        RespuestasParametrosHash.put(RespuestasParametros.DOCUMENTOINCORRECTO, HttpStatus.BAD_REQUEST);
         RespuestasParametrosHash.put(RespuestasParametros.GENERALPARAMS, HttpStatus.BAD_REQUEST);
         RespuestasParametrosHash.put(RespuestasParametros.NOMBREPARAMETROVACIO, HttpStatus.CONFLICT);
         RespuestasParametrosHash.put(RespuestasParametros.NOMBREPARAMETROEXISTE, HttpStatus.CONFLICT);

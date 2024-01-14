@@ -1,9 +1,11 @@
 package imena.uisrael.docsmanagement.services;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,13 +14,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import imena.uisrael.docsmanagement.DTO.ObjetoParametros.ParamFooter;
+import imena.uisrael.docsmanagement.DTO.ObjetoParametros.Documento;
 import imena.uisrael.docsmanagement.DTO.ObjetoParametros.ParamGenerics;
-import imena.uisrael.docsmanagement.DTO.ObjetoParametros.ParamHeader;
 import imena.uisrael.docsmanagement.DTO.ObjetoParametros.ParametrosJson;
+import imena.uisrael.docsmanagement.DTO.ObjetoParametros.Placeholder;
 import imena.uisrael.docsmanagement.model.Parametros;
 import imena.uisrael.docsmanagement.model.Parciales.RespuestasUsuarios;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class GeneralFunctions {
 
     public static ResponseEntity<Object> convertJSON(Object objeto) {
@@ -88,39 +92,64 @@ public class GeneralFunctions {
     }
 
     public static ParametrosJson converParamToJSON(Parametros param) {
-        byte[] blob = param.getJsonParametros();
+        byte[] blob = param.getJson();
         String jsonString = new String(blob, StandardCharsets.UTF_8);
 
         // Parse the JSON string manually
         JSONObject jsonObject = new JSONObject(jsonString);
+        JSONObject documentsJson = jsonObject.getJSONObject("documents");
+        JSONObject genericsJson = jsonObject.getJSONObject("generales");
 
-        JSONObject headerJson = jsonObject.getJSONObject("header");
-        JSONObject footerJson = jsonObject.getJSONObject("footer");
-        JSONObject genericsJson = jsonObject.getJSONObject("generics");
+        byte[] document = documentsJson.getString("document").getBytes();
+        String documentName = documentsJson.getString("documentName");
 
-        String titulo = headerJson.getString("titulo");
-        String subtitulo = headerJson.getString("subtitulo");
-        String nombreorganizacion = headerJson.getString("nombreorganizacion");
-        String logo = headerJson.getString("logo");
-        String ladologo = headerJson.getString("ladologo");
-        String fecha = headerJson.getString("fecha");
+        JSONArray placeholdersArray = jsonObject.getJSONArray("placeholders");
 
-        String notapiepagina = footerJson.getString("notapiepagina");
-        String informacioncontacto = footerJson.getString("informacioncontacto");
-        String firma = footerJson.getString("firma");
+        // Create a list to store Placeholder objects
+        List<Placeholder> placeholdersList = new ArrayList<>();
+        for (int i = 0; i < placeholdersArray.length(); i++) {
+            JSONObject placeholderJson = placeholdersArray.getJSONObject(i);
 
-        String font = genericsJson.getString("font");
-        int fontSize = genericsJson.getInt("fontSize");
-        String fontColor = genericsJson.getString("fontColor");
+            // Extract values from the JSON object
+            String placeholderName = placeholderJson.getString("placeholderName");
+            String placeholderValue = "";
+            if (placeholderJson.has("placeholderValue") && !placeholderJson.isNull("placeholderValue")) {
+                placeholderValue = placeholderJson.getString("placeholderValue");
+            }
+            byte[] placeholderValueImagen = null; // Handle null case appropriately
+            if (placeholderJson.has("placeholderValueImagen") && !placeholderJson.isNull("placeholderValueImagen")) {
+                // Handle the case when placeholderValueImagen is not null
+                placeholderValueImagen = placeholderJson.getString("placeholderValueImagen").getBytes();
+            }
 
-        ParamHeader h = new ParamHeader(titulo, subtitulo, nombreorganizacion, logo, ladologo, fecha);
-        ParamFooter f = new ParamFooter(notapiepagina, informacioncontacto, firma);
+            // Assuming ParamGenerics is a simple class with default constructor
+            JSONObject parametrosPlaceholderJson = placeholderJson.getJSONObject("parametros");
+            log.info("" + parametrosPlaceholderJson);
+            String font = parametrosPlaceholderJson.isNull("font") ? null : parametrosPlaceholderJson.getString("font");
+            int fontSize = parametrosPlaceholderJson.isNull("fontSize") ? 0
+                    : parametrosPlaceholderJson.getInt("fontSize");
+            String fontColor = parametrosPlaceholderJson.isNull("fontColor") ? null
+                    : parametrosPlaceholderJson.getString("fontColor");
+
+            // Create a ParamGenerics object
+            ParamGenerics parametrosinternos = new ParamGenerics(font, fontSize, fontColor);
+
+            // Create a Placeholder object and add it to the list
+            Placeholder placeholder = new Placeholder(placeholderName, placeholderValue, placeholderValueImagen,
+                    parametrosinternos);
+            placeholdersList.add(placeholder);
+        }
+        Documento d = new Documento(documentName, document);
+        String font = genericsJson.isNull("font") ? null : genericsJson.getString("font");
+        int fontSize = genericsJson.isNull("fontSize") ? 0
+                : genericsJson.getInt("fontSize");
+        String fontColor = genericsJson.isNull("fontColor") ? null : genericsJson.getString("fontColor");
         ParamGenerics g = new ParamGenerics(font, fontSize, fontColor);
-
         ParametrosJson parametrosJson = new ParametrosJson();
-        parametrosJson.header = h;
-        parametrosJson.footer = f;
-        parametrosJson.generics = g;
+
+        parametrosJson.generales = g;
+        parametrosJson.documents = d;
+        parametrosJson.placeholders = placeholdersList;
         parametrosJson.nombreParametro = param.getNombreParametro();
         return parametrosJson;
     }
