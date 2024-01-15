@@ -1,11 +1,20 @@
 package imena.uisrael.docsmanagement.services;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import imena.uisrael.docsmanagement.DTO.ObjetoParametros.ParametrosJson;
 import imena.uisrael.docsmanagement.DTO.ObjetoParametros.ParametrosPlaceholders;
+import imena.uisrael.docsmanagement.DTO.ObjetoParametros.Placeholder;
 import imena.uisrael.docsmanagement.model.AccessToken;
 import imena.uisrael.docsmanagement.model.Parametros;
 import imena.uisrael.docsmanagement.model.Parciales.RespuestasAccessToken;
@@ -47,6 +57,11 @@ public class ParametrosService {
             parametrosJson.documents = objeto.documents;
             parametrosJson.generales = objeto.generales;
             parametrosJson.nombreParametro = objeto.parametros.getNombreParametro();
+
+            String verificarPlaceholder = verificarPlaceholderDoc(objeto, parametrosJson);
+            if(!verificarPlaceholder.isBlank() || !verificarPlaceholder.isEmpty()){
+                return verificarPlaceholder;
+            }
             String json = GeneralFunctions.ConverToString(parametrosJson);
             if (json != "") {
 
@@ -184,18 +199,22 @@ public class ParametrosService {
             if (parametrosJson.placeholders != null && parametrosJson.placeholders.size() > 0) {
                 parametrosJsonantiguo.placeholders = parametrosJson.placeholders;
             }
-            if(parametrosJson.nombreParametro != null && !parametrosJson.nombreParametro.isEmpty()){
+            if (parametrosJson.nombreParametro != null && !parametrosJson.nombreParametro.isEmpty()) {
                 parametrosJsonantiguo.nombreParametro = parametrosJson.nombreParametro;
             }
             if (parametrosJson.generales != null) {
                 parametrosJsonantiguo.generales = parametrosJson.generales;
             }
-            
+
+            String verificarPlaceholder = verificarPlaceholderDoc(objeto, parametrosJsonantiguo);
+            if(!verificarPlaceholder.isBlank() || !verificarPlaceholder.isEmpty()){
+                return verificarPlaceholder;
+            }
             parametrosantiguo.setNombreParametro(objeto.parametros.getNombreParametro());
 
             parametrosantiguo.setUltimaModificacion(new Date());
             parametrosantiguo.setJson(GeneralFunctions.ConverToString(parametrosJsonantiguo).getBytes());
-           
+
             try {
                 Parametros res = new Parametros();
                 res = parametrosRepo.save(parametrosantiguo);
@@ -206,5 +225,52 @@ public class ParametrosService {
         } catch (Exception e) {
             return RespuestasParametros.ERRORGUARDAR;
         }
+    }
+
+    private String verificarPlaceholderDoc(ParametrosPlaceholders objeto, ParametrosJson parametrosJsonantiguo) {
+
+        Set<String> receivedPlaceholders;
+        try {
+            receivedPlaceholders = extractPlaceholdersFromBase64(objeto);
+            Set<String> missingPlaceholders = new HashSet<>();
+            for (Placeholder placeholder : parametrosJsonantiguo.placeholders) {
+                missingPlaceholders.add(placeholder.placeholderName);
+            }
+            receivedPlaceholders.removeAll(missingPlaceholders);
+    
+            if (receivedPlaceholders.size() > 0) {
+                return RespuestasParametros.CAMPOSDOCUMENTO;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return RespuestasParametros.ERRORGUARDAR;
+        }
+
+       
+        return "";
+    }
+
+    public static Set<String> extractPlaceholdersFromBase64(ParametrosPlaceholders objeto) throws IOException {
+        Set<String> placeholders = new HashSet<>();
+
+        // Decode the base64-encoded document
+        try (InputStream is = new ByteArrayInputStream(objeto.documents.document)) {
+            XWPFDocument document = new XWPFDocument(is);
+
+            for (XWPFParagraph paragraph : document.getParagraphs()) {
+                List<XWPFRun> runs = paragraph.getRuns();
+                for (XWPFRun run : runs) {
+                    String text = run.getText(0);
+                    if (text != null && text.contains("[") && text.contains("]")) {
+                        // Extract placeholder from the text and add to the set
+                        String placeholder = text.substring(text.indexOf("[") + 1, text.indexOf("]"));
+                        placeholders.add(placeholder);
+                    }
+                }
+            }
+            document.close();
+        }
+
+        return placeholders;
     }
 }

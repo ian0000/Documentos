@@ -86,6 +86,7 @@ public class Parciales {
         public static String PARAMETRODESACTIVADO = "PARAMETRO DESACTIVADO";
         public static String SINREGISTROSTOKEN = "NO EXISTEN REGISTROS CON EL TOKEN.";
         public static String DOCUMENTOINCORRECTO = "DOCUMENTO INCORRECTO O VACIO.";
+        public static String CAMPOSDOCUMENTO = "CAMPOS DE DOCUMENTO Y CAMPOS ESPERADOS NO SON LOS MISMOS.";
     }
 
     public static class RespuestasDocumentos {
@@ -191,6 +192,7 @@ public class Parciales {
         RespuestasParametrosHash.put(RespuestasParametros.PARAMETROACTIVADO, HttpStatus.NOT_FOUND);
         RespuestasParametrosHash.put(RespuestasParametros.PARAMETRODESACTIVADO, HttpStatus.OK);
         RespuestasParametrosHash.put(RespuestasParametros.SINREGISTROSTOKEN, HttpStatus.OK);
+        RespuestasParametrosHash.put(RespuestasParametros.CAMPOSDOCUMENTO, HttpStatus.CONFLICT);
 
         RespuestasParametrosHash.put(RespuestasAccessToken.TOKENNOENCONTRADO, HttpStatus.NOT_FOUND);
         RespuestasParametrosHash.put(RespuestasGenerales.JSONINCORRECTO, HttpStatus.BAD_REQUEST);

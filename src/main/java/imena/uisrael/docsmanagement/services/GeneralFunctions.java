@@ -124,7 +124,6 @@ public class GeneralFunctions {
 
             // Assuming ParamGenerics is a simple class with default constructor
             JSONObject parametrosPlaceholderJson = placeholderJson.getJSONObject("parametros");
-            log.info("" + parametrosPlaceholderJson);
             String font = parametrosPlaceholderJson.isNull("font") ? null : parametrosPlaceholderJson.getString("font");
             int fontSize = parametrosPlaceholderJson.isNull("fontSize") ? 0
                     : parametrosPlaceholderJson.getInt("fontSize");
