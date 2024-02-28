@@ -5,11 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -17,9 +15,6 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import imena.uisrael.docsmanagement.DTO.ObjetoParametros.ParametrosJson;
 import imena.uisrael.docsmanagement.DTO.ObjetoParametros.ParametrosPlaceholders;
@@ -31,9 +26,7 @@ import imena.uisrael.docsmanagement.model.Parciales.RespuestasGenerales;
 import imena.uisrael.docsmanagement.model.Parciales.RespuestasParametros;
 import imena.uisrael.docsmanagement.repo.AccessTokenRepo;
 import imena.uisrael.docsmanagement.repo.ParametrosRepo;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Service
 public class ParametrosService {
 
@@ -59,7 +52,7 @@ public class ParametrosService {
             parametrosJson.nombreParametro = objeto.parametros.getNombreParametro();
 
             String verificarPlaceholder = verificarPlaceholderDoc(objeto, parametrosJson);
-            if(!verificarPlaceholder.isBlank() || !verificarPlaceholder.isEmpty()){
+            if (!verificarPlaceholder.isBlank() || !verificarPlaceholder.isEmpty()) {
                 return verificarPlaceholder;
             }
             String json = GeneralFunctions.ConverToString(parametrosJson);
@@ -207,7 +200,7 @@ public class ParametrosService {
             }
 
             String verificarPlaceholder = verificarPlaceholderDoc(objeto, parametrosJsonantiguo);
-            if(!verificarPlaceholder.isBlank() || !verificarPlaceholder.isEmpty()){
+            if (!verificarPlaceholder.isBlank() || !verificarPlaceholder.isEmpty()) {
                 return verificarPlaceholder;
             }
             parametrosantiguo.setNombreParametro(objeto.parametros.getNombreParametro());
@@ -237,7 +230,7 @@ public class ParametrosService {
                 missingPlaceholders.add(placeholder.placeholderName);
             }
             receivedPlaceholders.removeAll(missingPlaceholders);
-    
+
             if (receivedPlaceholders.size() > 0) {
                 return RespuestasParametros.CAMPOSDOCUMENTO;
             }
@@ -246,7 +239,6 @@ public class ParametrosService {
             return RespuestasParametros.ERRORGUARDAR;
         }
 
-       
         return "";
     }
 

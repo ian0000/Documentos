@@ -199,7 +199,7 @@ public class Parciales {
     }
     public static Map<String, HttpStatus> RespuestasDocumentosHash = new HashMap<>();
     static {
-
+        RespuestasDocumentosHash.put(RespuestasParametros.PARAMETRONOEXISTE, HttpStatus.BAD_REQUEST);
     }
 
 }
